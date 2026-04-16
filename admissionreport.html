@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admission Reports | START WELL EDUCATION</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+.report-cards-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 18px; margin-bottom: 26px;
+}
+.rpt-stat {
+  border-radius: var(--radius); padding: 22px 20px;
+  color: #fff; position: relative; overflow: hidden;
+  box-shadow: var(--shadow-md); transition: transform .2s;
+}
+.rpt-stat:hover { transform: translateY(-3px); }
+.rpt-stat.red { background: linear-gradient(135deg, #e74c3c, #c0392b); }
+.rpt-stat.yellow { background: linear-gradient(135deg, #f39c12, #d68910); }
+.rpt-stat.blue { background: linear-gradient(135deg, #3498db, #2471a3); }
+.rpt-stat.indigo { background: linear-gradient(135deg, #5b6abf, #3d4faa); }
+.rpt-stat::after {
+  content: ''; position: absolute; right: -20px; top: -20px;
+  width: 90px; height: 90px; border-radius: 50%;
+  background: rgba(255,255,255,0.12);
+}
+.rpt-stat .rpt-icon { font-size: 32px; opacity: 0.9; margin-bottom: 10px; }
+.rpt-stat h3 { font-size: 36px; font-weight: 900; line-height: 1; letter-spacing: -1px; }
+.rpt-stat p { font-size: 13px; margin-top: 6px; opacity: 0.88; font-weight: 500; }
+.rpt-stat a.view-link {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 14px; background: rgba(255,255,255,0.22); color: #fff;
+  text-decoration: none; padding: 5px 12px; border-radius: 20px;
+  font-size: 12px; font-weight: 600; transition: background .2s;
+}
+.rpt-stat a.view-link:hover { background: rgba(255,255,255,0.38); }
+
+.reports-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
+}
+@media (max-width: 640px) { .reports-grid { grid-template-columns: 1fr; } }
+
+.report-item {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm);
+  padding: 18px 20px; display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; transition: all .2s;
+}
+.report-item:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: #cbd5e1; }
+.report-item-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
+.ri-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; flex-shrink: 0; }
+.ri-text h5 { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 3px; }
+.ri-text p { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+
+.note-box {
+  background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius-sm);
+  padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start;
+  margin-top: 20px;
+}
+.note-box .note-icon { color: var(--orange); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
+.note-box p { font-size: 13px; color: #92400e; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="header-left">
+    <button class="menu-toggle" id="menuToggle"><i class="fa fa-bars"></i></button>
+    <div class="logo-area">
+      <div class="logo-icon">SW</div>
+      <div class="logo-text">START WELL EDUCATION<small>Admin Dashboard</small></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="hdr-btn" title="Tasks"><i class="fa fa-tasks"></i><span class="badge">3</span></button>
+    <button class="hdr-btn" title="Messages"><i class="fa fa-envelope"></i><span class="badge">7</span></button>
+    <button class="hdr-btn" title="Notifications"><i class="fa fa-bell"></i><span class="badge">12</span></button>
+    <div class="hdr-divider"></div>
+    <div class="user-chip">
+      <div class="user-avatar">AH</div>
+      <span>Ali Hussnain</span>
+      <i class="fa fa-caret-down"></i>
+    </div>
+  </div>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-search">
+      <div class="sidebar-search-wrap">
+        <i class="fa fa-search"></i>
+        <input type="text" id="menuSearch" placeholder="Search modules...">
+      </div>
+    </div>
+    <ul class="main-menu" id="mainMenu">
+      <div class="nav-section-label">Main</div>
+      <li><a href="index.html"><span class="menu-icon"><i class="fa fa-th-large"></i></span><span class="menu-label">Dashboard</span></a></li>
+
+      <div class="nav-section-label">Admissions</div>
+      <li class="has-sub open">
+        <a href="#" onclick="toggleMenu(this); return false;">
+          <span class="menu-icon"><i class="fa fa-user-plus"></i></span>
+          <span class="menu-label">Admission Management</span>
+          <i class="fa fa-angle-right arrow-icon"></i>
+        </a>
+        <ul class="submenu open">
+          <li><a href="admitstudent.html"><i class="fa fa-circle-o fa-fw"></i> Admit Student</a></li>
+          <li><a href="bulkadmitstudent.html"><i class="fa fa-circle-o fa-fw"></i> Admit Bulk Student</a></li>
+          <li><a href="admissionrequest.html"><i class="fa fa-circle-o fa-fw"></i> Admission Requests <span class="menu-badge zero">0</span></a></li>
+          <li class="has-sub">
+            <a href="#" onclick="toggleMenu(this); return false;"><i class="fa fa-circle-o fa-fw"></i> Admission Inquiries <i class="fa fa-angle-right arrow-icon"></i></a>
+            <ul class="submenu">
+              <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Inquiries</a></li>
+              <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Send SMS To Inquiries</a></li>
+            </ul>
+          </li>
+          <li class="active"><a href="admissionreport.html"><i class="fa fa-circle-o fa-fw"></i> Admission Reports</a></li>
+        </ul>
+      </li>
+      <div class="nav-section-label">Students & Staff</div>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-users"></i></span><span class="menu-label">Student Management</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Information</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Promotion</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Birthdays <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Transfer</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Info Reports</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-user"></i></span><span class="menu-label">Parent Accounts</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Accounts</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Account Requests <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Gate Passes</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Dues Report</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Parent Info Reports</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-id-badge"></i></span><span class="menu-label">Staff Management</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Management</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Departments</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Birthdays <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Job Inquiries / CV Bank</a></li></ul></li>
+      <div class="nav-section-label">Finance</div>
+      <li><a href="#"><span class="menu-icon"><i class="fa fa-tasks"></i></span><span class="menu-label">Task Management <span class="menu-badge zero">0</span></span></a></li>
+      <li><a href="#"><span class="menu-icon"><i class="fa fa-money"></i></span><span class="menu-label">Fee Payment</span></a></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-briefcase"></i></span><span class="menu-label">Accounting</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Generate Monthly Fee</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Types / Fee Heads</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Structure</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Balance Sheet</a></li></ul></li>
+      <div class="nav-section-label">Operations</div>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-check-square-o"></i></span><span class="menu-label">Manage Attendance</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Students Attendance</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Attendance</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Attendance Reports</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-cog"></i></span><span class="menu-label">Settings</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> General Settings</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> School Profile</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Session Settings</a></li></ul></li>
+    </ul>
+  </nav>
+
+  <main class="main-content" id="mainContent">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>
+          <div class="ph-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b)"><i class="fa fa-file-text"></i></div>
+          Admission Reports
+        </h1>
+        <nav class="breadcrumb-nav">
+          <a href="index.html">Dashboard</a>
+          <i class="fa fa-angle-right"></i>
+          <a href="#">Admission Management</a>
+          <i class="fa fa-angle-right"></i>
+          <span>Admission Reports</span>
+        </nav>
+      </div>
+      <div class="page-meta">
+        <div class="session-chip"><i class="fa fa-calendar" style="color:var(--green)"></i> Session: 2026–2027</div>
+      </div>
+    </div>
+
+    <!-- Summary Stat Cards -->
+    <div class="report-cards-grid">
+      <div class="rpt-stat red">
+        <div class="rpt-icon"><i class="fa fa-credit-card"></i></div>
+        <h3>0</h3>
+        <p>Admissions Today</p>
+        <a href="#" class="view-link"><i class="fa fa-print"></i> View Report</a>
+      </div>
+      <div class="rpt-stat yellow">
+        <div class="rpt-icon"><i class="fa fa-bar-chart"></i></div>
+        <h3>9</h3>
+        <p>Admissions This Month</p>
+        <a href="#" class="view-link"><i class="fa fa-print"></i> View Report</a>
+      </div>
+      <div class="rpt-stat blue">
+        <div class="rpt-icon"><i class="fa fa-arrow-circle-up"></i></div>
+        <h3>174</h3>
+        <p>Active Students</p>
+        <a href="#" class="view-link"><i class="fa fa-external-link"></i> View Report</a>
+      </div>
+      <div class="rpt-stat indigo">
+        <div class="rpt-icon"><i class="fa fa-arrow-circle-down"></i></div>
+        <h3>57</h3>
+        <p>Deactivated Students</p>
+        <a href="#" class="view-link"><i class="fa fa-external-link"></i> View Report</a>
+      </div>
+    </div>
+
+    <!-- Printable Reports Panel -->
+    <div class="card">
+      <div class="card-header">
+        <h4>
+          <div class="ch-icon" style="background:linear-gradient(135deg,#27ae60,#219653)"><i class="fa fa-print"></i></div>
+          Printable Admission Reports
+        </h4>
+        <span style="font-size:12px;color:var(--text-muted)">City Campus Bhimber — Session 2026–2027</span>
+      </div>
+      <div class="card-body">
+        <div class="reports-grid">
+
+          <div class="report-item">
+            <div class="report-item-left">
+              <div class="ri-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b)"><i class="fa fa-calendar-o"></i></div>
+              <div class="ri-text">
+                <h5>Admissions Today</h5>
+                <p>List of newly admitted students today so far.</p>
+              </div>
+            </div>
+            <a href="#" class="print-btn"><i class="fa fa-print"></i> Print</a>
+          </div>
+
+          <div class="report-item">
+            <div class="report-item-left">
+              <div class="ri-icon" style="background:linear-gradient(135deg,#f39c12,#e67e22)"><i class="fa fa-bar-chart"></i></div>
+              <div class="ri-text">
+                <h5>Monthly Admissions</h5>
+                <p>List of total admitted students this month so far.</p>
+              </div>
+            </div>
+            <a href="#" class="print-btn"><i class="fa fa-print"></i> Print</a>
+          </div>
+
+          <div class="report-item">
+            <div class="report-item-left">
+              <div class="ri-icon" style="background:linear-gradient(135deg,#3498db,#2980b9)"><i class="fa fa-calendar"></i></div>
+              <div class="ri-text">
+                <h5>Admissions This Year</h5>
+                <p>List of admitted students this year so far.</p>
+              </div>
+            </div>
+            <a href="#" class="print-btn"><i class="fa fa-print"></i> Print</a>
+          </div>
+
+          <div class="report-item">
+            <div class="report-item-left">
+              <div class="ri-icon" style="background:linear-gradient(135deg,#8e44ad,#6c3483)"><i class="fa fa-file-text-o"></i></div>
+              <div class="ri-text">
+                <h5>Admission Forms</h5>
+                <p>Class-wise printable information-filled admission forms.</p>
+              </div>
+            </div>
+            <button class="print-btn" onclick="alert('Select a class to print admission forms.')"><i class="fa fa-print"></i> Print</button>
+          </div>
+
+          <div class="report-item">
+            <div class="report-item-left">
+              <div class="ri-icon" style="background:linear-gradient(135deg,#27ae60,#219653)"><i class="fa fa-file-o"></i></div>
+              <div class="ri-text">
+                <h5>Blank Admission Form</h5>
+                <p>Print a blank copy of the admission form.</p>
+              </div>
+            </div>
+            <a href="#" class="print-btn"><i class="fa fa-print"></i> Print</a>
+          </div>
+
+          <div class="report-item">
+            <div class="report-item-left">
+              <div class="ri-icon" style="background:linear-gradient(135deg,#16a085,#148f77)"><i class="fa fa-users"></i></div>
+              <div class="ri-text">
+                <h5>Full Student List</h5>
+                <p>Complete list of all currently enrolled students.</p>
+              </div>
+            </div>
+            <a href="#" class="print-btn"><i class="fa fa-print"></i> Print</a>
+          </div>
+
+        </div>
+
+        <div class="note-box">
+          <div class="note-icon"><i class="fa fa-info-circle"></i></div>
+          <p><strong>Note:</strong> Please ensure that all reports are printed in <strong>A4 size</strong> for optimal viewing. Adjust your printer settings accordingly before printing.</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const sidebar = document.getElementById('sidebar');
+  const mainContent = document.getElementById('mainContent');
+  const menuToggle = document.getElementById('menuToggle');
+  const overlay = document.getElementById('sidebarOverlay');
+  const menuSearch = document.getElementById('menuSearch');
+  let sidebarCollapsed = false;
+  menuToggle.addEventListener('click', function() {
+    if (window.innerWidth <= 768) { sidebar.classList.toggle('mobile-open'); overlay.classList.toggle('active'); }
+    else { sidebarCollapsed = !sidebarCollapsed; sidebar.classList.toggle('collapsed', sidebarCollapsed); mainContent.classList.toggle('expanded', sidebarCollapsed); }
+  });
+  overlay.addEventListener('click', function() { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); });
+  function toggleMenu(el) {
+    const li = el.closest('li'); const submenu = li.querySelector(':scope > .submenu'); if (!submenu) return;
+    li.classList.toggle('open', !li.classList.contains('open')); submenu.classList.toggle('open', !submenu.classList.contains('open'));
+  }
+  if (menuSearch) menuSearch.addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    document.querySelectorAll('#mainMenu li').forEach(li => {
+      if (!q) { li.classList.remove('menu-hidden'); return; }
+      li.classList.toggle('menu-hidden', !li.textContent.toLowerCase().includes(q));
+      if (li.textContent.toLowerCase().includes(q)) { let p = li.parentElement; while (p && p.id !== 'mainMenu') { if (p.classList.contains('submenu')) { p.classList.add('open'); const pl = p.closest('li.has-sub'); if (pl) pl.classList.add('open'); } p = p.parentElement; } }
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | START WELL EDUCATION</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<style>
+/* ===== RESET & TOKENS ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --sidebar-w: 265px;
+  --sidebar-bg: #1e2a38;
+  --sidebar-hover: #28384a;
+  --sidebar-active-bg: #e74c3c;
+  --accent: #e74c3c;
+  --accent2: #3498db;
+  --text-light: #ecf0f1;
+  --text-muted: #8fa3b1;
+  --submenu-bg: #192533;
+  --submenu2-bg: #141f2b;
+  --header-h: 60px;
+  --body-bg: #f0f3f7;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --green: #27ae60;
+  --orange: #f39c12;
+  --purple: #8e44ad;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.12);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+html, body { height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; }
+body { display: flex; flex-direction: column; background: var(--body-bg); color: #334155; overflow-x: hidden; }
+
+/* ===== HEADER ===== */
+.top-header {
+  height: var(--header-h);
+  background: linear-gradient(135deg, #1e2a38 0%, #0f1923 100%);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 22px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.35);
+}
+.header-left { display: flex; align-items: center; gap: 16px; }
+.menu-toggle {
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-light); font-size: 18px; cursor: pointer;
+  padding: 7px 10px; border-radius: 8px; transition: all .2s;
+}
+.menu-toggle:hover { background: rgba(255,255,255,0.14); }
+.logo-area { display: flex; align-items: center; gap: 10px; }
+.logo-icon {
+  width: 36px; height: 36px; background: var(--accent);
+  border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  font-size: 16px; color: #fff; font-weight: 800;
+}
+.logo-text { color: var(--text-light); font-size: 16px; font-weight: 700; letter-spacing: 0.3px; line-height: 1.1; }
+.logo-text small { display: block; font-size: 10px; color: var(--text-muted); font-weight: 400; letter-spacing: 1px; text-transform: uppercase; }
+
+.header-right { display: flex; align-items: center; gap: 6px; }
+.hdr-btn {
+  position: relative; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-light); font-size: 16px; cursor: pointer;
+  width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+}
+.hdr-btn:hover { background: rgba(255,255,255,0.14); }
+.hdr-btn .badge {
+  position: absolute; top: -4px; right: -4px;
+  background: var(--accent); color: #fff; border-radius: 50%;
+  width: 16px; height: 16px; font-size: 9px; display: flex; align-items: center; justify-content: center;
+  border: 2px solid #1e2a38;
+}
+.hdr-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.12); margin: 0 6px; }
+.user-chip {
+  display: flex; align-items: center; gap: 9px; cursor: pointer;
+  background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12);
+  padding: 5px 12px 5px 5px; border-radius: 50px; transition: all .2s;
+}
+.user-chip:hover { background: rgba(255,255,255,0.13); }
+.user-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--accent), #c0392b);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 12px; color: #fff;
+}
+.user-chip span { color: var(--text-light); font-size: 13px; font-weight: 500; }
+.user-chip i { color: var(--text-muted); font-size: 10px; }
+
+/* ===== LAYOUT ===== */
+.layout { display: flex; margin-top: var(--header-h); min-height: calc(100vh - var(--header-h)); }
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  width: var(--sidebar-w); background: var(--sidebar-bg);
+  position: fixed; left: 0; top: var(--header-h);
+  height: calc(100vh - var(--header-h));
+  overflow-y: auto; overflow-x: hidden;
+  transition: width .3s cubic-bezier(.4,0,.2,1); z-index: 900;
+  scrollbar-width: thin; scrollbar-color: #2d3f52 transparent;
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: #2d3f52; border-radius: 4px; }
+.sidebar.collapsed { width: 60px; }
+
+.sidebar-search { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.sidebar-search-wrap { position: relative; }
+.sidebar-search-wrap .fa-search {
+  position: absolute; left: 10px; top: 50%; transform: translateY(-50%);
+  color: var(--text-muted); font-size: 12px; pointer-events: none;
+}
+.sidebar-search input {
+  width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+  color: var(--text-light); padding: 8px 10px 8px 30px; border-radius: 8px; font-size: 12px; outline: none;
+  transition: all .2s;
+}
+.sidebar-search input:focus { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+.sidebar-search input::placeholder { color: var(--text-muted); }
+.sidebar.collapsed .sidebar-search { display: none; }
+
+.nav-section-label {
+  padding: 14px 14px 4px; font-size: 9.5px; font-weight: 700; letter-spacing: 1.2px;
+  text-transform: uppercase; color: #4a6278;
+}
+.sidebar.collapsed .nav-section-label { display: none; }
+
+.main-menu { list-style: none; padding: 6px 0 20px; }
+.main-menu > li { margin: 1px 0; }
+.main-menu li > a {
+  display: flex; align-items: center; gap: 11px;
+  padding: 10px 14px; color: #a0b4c5; text-decoration: none;
+  transition: all .18s; white-space: nowrap; overflow: hidden; cursor: pointer;
+  border-radius: 0; position: relative;
+}
+.main-menu li > a:hover { background: var(--sidebar-hover); color: #e2eaf1; }
+.main-menu li.active > a {
+  background: linear-gradient(90deg, rgba(231,76,60,0.22), rgba(231,76,60,0.05));
+  color: #fff;
+  border-left: 3px solid var(--accent);
+}
+.main-menu li > a .menu-icon {
+  font-size: 15px; min-width: 22px; text-align: center;
+  color: #5d7a90; transition: color .18s;
+}
+.main-menu li > a:hover .menu-icon,
+.main-menu li.active > a .menu-icon { color: var(--accent); }
+.main-menu li > a .menu-label { flex: 1; font-size: 13px; font-weight: 500; }
+.main-menu li > a .arrow-icon { font-size: 10px; color: #4a6278; transition: transform .25s; }
+.main-menu li.open > a .arrow-icon { transform: rotate(90deg); }
+.menu-badge {
+  background: var(--orange); color: #fff; border-radius: 10px;
+  padding: 1px 6px; font-size: 10px; font-weight: 700; min-width: 18px; text-align: center;
+}
+.menu-badge.zero { background: #3a5068; }
+
+.submenu { list-style: none; background: var(--submenu-bg); max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+.submenu.open { max-height: 2000px; }
+.submenu li > a {
+  padding: 8px 14px 8px 42px; font-size: 12.5px; color: #7a99ae;
+  display: flex; align-items: center; gap: 8px; text-decoration: none; transition: all .15s;
+}
+.submenu li > a .fa-circle-o { font-size: 7px; }
+.submenu li > a:hover { color: #e2eaf1; background: rgba(255,255,255,0.04); }
+.submenu li.active > a {
+  color: #ff7c6e; background: rgba(231,76,60,0.1);
+  font-weight: 600; border-left: 2px solid var(--accent);
+  padding-left: 40px;
+}
+.submenu .submenu { background: var(--submenu2-bg); }
+.submenu .submenu li > a { padding-left: 56px; font-size: 12px; }
+
+.sidebar.collapsed .main-menu li > a .menu-label,
+.sidebar.collapsed .main-menu li > a .arrow-icon,
+.sidebar.collapsed .main-menu li > a .menu-badge,
+.sidebar.collapsed .main-menu li > a .menu-badge { display: none; }
+.sidebar.collapsed .main-menu li > a { justify-content: center; padding: 13px; }
+.sidebar.collapsed .submenu { display: none; }
+
+/* ===== MAIN CONTENT ===== */
+.main-content {
+  margin-left: var(--sidebar-w); flex: 1; padding: 26px;
+  transition: margin-left .3s cubic-bezier(.4,0,.2,1);
+  min-height: calc(100vh - var(--header-h));
+}
+.main-content.expanded { margin-left: 60px; }
+
+/* ===== PAGE HEADER ===== */
+.page-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 24px; flex-wrap: wrap; gap: 12px;
+}
+.page-header-left h1 {
+  font-size: 22px; font-weight: 700; color: #1e2a38;
+  display: flex; align-items: center; gap: 10px;
+}
+.page-header-left h1 .ph-icon {
+  width: 40px; height: 40px; border-radius: 10px;
+  background: linear-gradient(135deg, var(--accent), #c0392b);
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 16px;
+}
+.breadcrumb-nav { margin-top: 5px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+.breadcrumb-nav a { color: var(--accent2); text-decoration: none; }
+.breadcrumb-nav a:hover { text-decoration: underline; }
+.page-meta { display: flex; align-items: center; gap: 8px; }
+.session-chip {
+  background: #fff; border: 1px solid var(--border); border-radius: 20px;
+  padding: 5px 14px; font-size: 12px; color: #475569; font-weight: 500;
+  display: flex; align-items: center; gap: 6px;
+}
+.session-chip i { color: var(--green); }
+
+/* ===== STATS GRID ===== */
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 18px; margin-bottom: 24px; }
+.stat-card {
+  background: var(--card-bg); border-radius: var(--radius); padding: 22px;
+  display: flex; align-items: center; gap: 18px;
+  box-shadow: var(--shadow-sm); border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+  transition: transform .2s, box-shadow .2s;
+}
+.stat-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+}
+.stat-card.blue::before { background: linear-gradient(90deg, var(--accent2), #74b9ff); }
+.stat-card.red::before { background: linear-gradient(90deg, var(--accent), #fd79a8); }
+.stat-card.green::before { background: linear-gradient(90deg, var(--green), #55efc4); }
+.stat-card.orange::before { background: linear-gradient(90deg, var(--orange), #fdcb6e); }
+.stat-card.purple::before { background: linear-gradient(90deg, var(--purple), #a29bfe); }
+.stat-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+.stat-icon {
+  width: 54px; height: 54px; border-radius: var(--radius-sm); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; font-size: 22px; color: #fff;
+}
+.stat-icon.blue { background: linear-gradient(135deg, var(--accent2), #2980b9); }
+.stat-icon.red { background: linear-gradient(135deg, var(--accent), #c0392b); }
+.stat-icon.green { background: linear-gradient(135deg, var(--green), #219653); }
+.stat-icon.orange { background: linear-gradient(135deg, var(--orange), #e67e22); }
+.stat-icon.purple { background: linear-gradient(135deg, var(--purple), #6c3483); }
+.stat-info { flex: 1; min-width: 0; }
+.stat-info h3 { font-size: 28px; font-weight: 800; color: #1e293b; line-height: 1; letter-spacing: -0.5px; }
+.stat-info p { font-size: 12px; color: var(--text-muted); margin-top: 5px; font-weight: 500; }
+.stat-trend { font-size: 11px; margin-top: 4px; display: flex; align-items: center; gap: 3px; }
+.stat-trend.up { color: var(--green); }
+.stat-trend.down { color: var(--accent); }
+
+/* ===== SECTION ROWS ===== */
+.content-row { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-bottom: 18px; }
+.content-row.thirds { grid-template-columns: 1.5fr 1fr; }
+@media (max-width: 960px) { .content-row, .content-row.thirds { grid-template-columns: 1fr; } }
+
+/* ===== CARD ===== */
+.card {
+  background: var(--card-bg); border-radius: var(--radius);
+  box-shadow: var(--shadow-sm); border: 1px solid var(--border); overflow: hidden;
+}
+.card-header {
+  padding: 15px 20px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: #fafbfd;
+}
+.card-header h4 { font-size: 13.5px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+.card-header h4 .ch-icon {
+  width: 26px; height: 26px; border-radius: 6px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: #fff;
+}
+.card-header-action { font-size: 12px; color: var(--accent2); cursor: pointer; text-decoration: none; font-weight: 500; }
+.card-header-action:hover { text-decoration: underline; }
+.card-body { padding: 18px 20px; }
+.card-body.no-pad { padding: 0; }
+
+/* ===== TABLE ===== */
+.data-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.data-table th {
+  background: #f8fafc; padding: 11px 14px; text-align: left;
+  font-weight: 600; color: #64748b; border-bottom: 2px solid var(--border);
+  font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.5px;
+}
+.data-table td { padding: 11px 14px; border-bottom: 1px solid #f1f5f9; color: #475569; }
+.data-table tr:last-child td { border-bottom: none; }
+.data-table tbody tr:hover td { background: #f8fafc; }
+.student-cell { display: flex; align-items: center; gap: 9px; }
+.s-avatar {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+}
+
+/* ===== BADGES ===== */
+.badge-pill {
+  padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.badge-pill.enrolled { background: #dcfce7; color: #166534; }
+.badge-pill.pending { background: #fef9c3; color: #854d0e; }
+.badge-pill.unpaid { background: #fee2e2; color: #991b1b; }
+.badge-pill.today { background: #dbeafe; color: #1e40af; }
+.badge-pill.open-red { background: #fee2e2; color: #991b1b; }
+
+/* ===== PROGRESS ===== */
+.progress-item { margin-bottom: 16px; }
+.progress-item:last-child { margin-bottom: 0; }
+.progress-label { display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 12.5px; }
+.progress-label span:first-child { color: #475569; font-weight: 500; }
+.progress-label span:last-child { color: #1e293b; font-weight: 700; }
+.progress-track { background: #f1f5f9; border-radius: 20px; height: 8px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 20px; transition: width 1s ease; }
+.progress-fill.blue { background: linear-gradient(90deg, #3498db, #74b9ff); }
+.progress-fill.green { background: linear-gradient(90deg, #27ae60, #55efc4); }
+.progress-fill.orange { background: linear-gradient(90deg, #f39c12, #fdcb6e); }
+.progress-fill.red { background: linear-gradient(90deg, #e74c3c, #fd79a8); }
+
+/* ===== ACTIVITY FEED ===== */
+.activity-list { list-style: none; }
+.activity-item {
+  display: flex; gap: 12px; padding: 11px 0;
+  border-bottom: 1px solid #f1f5f9; position: relative;
+}
+.activity-item:last-child { border-bottom: none; }
+.activity-avatar {
+  width: 32px; height: 32px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: #fff;
+}
+.activity-avatar.green { background: linear-gradient(135deg, var(--green), #219653); }
+.activity-avatar.blue { background: linear-gradient(135deg, var(--accent2), #2980b9); }
+.activity-avatar.orange { background: linear-gradient(135deg, var(--orange), #e67e22); }
+.activity-avatar.red { background: linear-gradient(135deg, var(--accent), #c0392b); }
+.activity-avatar.purple { background: linear-gradient(135deg, var(--purple), #6c3483); }
+.activity-body { flex: 1; min-width: 0; }
+.activity-body strong { font-size: 13px; color: #1e293b; font-weight: 600; display: block; }
+.activity-body span { font-size: 11.5px; color: var(--text-muted); margin-top: 2px; display: block; }
+.activity-time { font-size: 11px; color: #94a3b8; flex-shrink: 0; margin-top: 2px; }
+
+/* ===== OVERVIEW TABLE ===== */
+.overview-row { display: flex; align-items: center; gap: 12px; padding: 11px 0; border-bottom: 1px solid #f1f5f9; }
+.overview-row:last-child { border-bottom: none; }
+.overview-icon { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.overview-icon.blue { background: #dbeafe; color: var(--accent2); }
+.overview-icon.green { background: #dcfce7; color: var(--green); }
+.overview-icon.orange { background: #fef3c7; color: var(--orange); }
+.overview-icon.purple { background: #f3e8ff; color: var(--purple); }
+.overview-icon.red { background: #fee2e2; color: var(--accent); }
+.overview-label { flex: 1; font-size: 13px; color: #475569; }
+.overview-value { font-size: 13px; font-weight: 700; color: #1e293b; }
+
+/* ===== DONUT CHART AREA ===== */
+.chart-container { position: relative; height: 200px; display: flex; align-items: center; justify-content: center; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); transition: transform .3s; }
+  .sidebar.mobile-open { transform: translateX(0); width: var(--sidebar-w) !important; }
+  .main-content { margin-left: 0 !important; padding: 16px; }
+  .stats-grid { grid-template-columns: 1fr 1fr; }
+  .user-chip span, .user-chip i { display: none; }
+}
+@media (max-width: 480px) { .stats-grid { grid-template-columns: 1fr; } }
+
+/* ===== SIDEBAR OVERLAY ===== */
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 850; backdrop-filter: blur(2px); }
+.sidebar-overlay.active { display: block; }
+
+/* ===== UTILS ===== */
+.menu-hidden { display: none !important; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<!-- TOP HEADER -->
+<header class="top-header">
+  <div class="header-left">
+    <button class="menu-toggle" id="menuToggle" title="Toggle Sidebar">
+      <i class="fa fa-bars"></i>
+    </button>
+    <div class="logo-area">
+      <div class="logo-icon">SW</div>
+      <div class="logo-text">
+        START WELL EDUCATION
+        <small>Admin Dashboard</small>
+      </div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="hdr-btn" title="Tasks"><i class="fa fa-tasks"></i><span class="badge">3</span></button>
+    <button class="hdr-btn" title="Messages"><i class="fa fa-envelope"></i><span class="badge">7</span></button>
+    <button class="hdr-btn" title="Notifications"><i class="fa fa-bell"></i><span class="badge">12</span></button>
+    <div class="hdr-divider"></div>
+    <div class="user-chip">
+      <div class="user-avatar">AH</div>
+      <span>Ali Hussnain</span>
+      <i class="fa fa-caret-down"></i>
+    </div>
+  </div>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="layout">
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-search">
+      <div class="sidebar-search-wrap">
+        <i class="fa fa-search"></i>
+        <input type="text" id="menuSearch" placeholder="Search modules...">
+      </div>
+    </div>
+    <ul class="main-menu" id="mainMenu">
+      <div class="nav-section-label">Main</div>
+      <li class="active">
+        <a href="index.html">
+          <span class="menu-icon"><i class="fa fa-th-large"></i></span>
+          <span class="menu-label">Dashboard</span>
+        </a>
+      </li>
+
+      <div class="nav-section-label">Admissions</div>
+      <li class="has-sub open">
+        <a href="#" onclick="toggleMenu(this); return false;">
+          <span class="menu-icon"><i class="fa fa-user-plus"></i></span>
+          <span class="menu-label">Admission Management</span>
+          <i class="fa fa-angle-right arrow-icon"></i>
+        </a>
+        <ul class="submenu open">
+          <li><a href="admitstudent.html"><i class="fa fa-circle-o fa-fw"></i> Admit Student</a></li>
+          <li><a href="bulkadmitstudent.html"><i class="fa fa-circle-o fa-fw"></i> Admit Bulk Student</a></li>
+          <li><a href="admissionrequest.html"><i class="fa fa-circle-o fa-fw"></i> Admission Requests <span class="menu-badge zero">0</span></a></li>
+          <li class="has-sub">
+            <a href="#" onclick="toggleMenu(this); return false;"><i class="fa fa-circle-o fa-fw"></i> Admission Inquiries <i class="fa fa-angle-right arrow-icon"></i></a>
+            <ul class="submenu">
+              <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Inquiries</a></li>
+              <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Send SMS To Inquiries</a></li>
+            </ul>
+          </li>
+          <li><a href="admissionreport.html"><i class="fa fa-circle-o fa-fw"></i> Admission Reports</a></li>
+        </ul>
+      </li>
+
+      <div class="nav-section-label">Students & Staff</div>
+      <li class="has-sub">
+        <a href="#" onclick="toggleMenu(this); return false;">
+          <span class="menu-icon"><i class="fa fa-users"></i></span>
+          <span class="menu-label">Student Management</span>
+          <i class="fa fa-angle-right arrow-icon"></i>
+        </a>
+        <ul class="submenu">
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Information</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Promotion</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Birthdays <span class="menu-badge zero">0</span></a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Transfer</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Info Reports</a></li>
+        </ul>
+      </li>
+      <li class="has-sub">
+        <a href="#" onclick="toggleMenu(this); return false;">
+          <span class="menu-icon"><i class="fa fa-user"></i></span>
+          <span class="menu-label">Parent Accounts</span>
+          <i class="fa fa-angle-right arrow-icon"></i>
+        </a>
+        <ul class="submenu">
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Accounts</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Account Requests <span class="menu-badge zero">0</span></a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Gate Passes</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Dues Report</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Parent Info Reports</a></li>
+        </ul>
+      </li>
+      <li class="has-sub">
+        <a href="#" onclick="toggleMenu(this); return false;">
+          <span class="menu-icon"><i class="fa fa-id-badge"></i></span>
+          <span class="menu-label">Staff Management</span>
+          <i class="fa fa-angle-right arrow-icon"></i>
+        </a>
+        <ul class="submenu">
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Management</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Departments</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Birthdays <span class="menu-badge zero">0</span></a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Job Inquiries / CV Bank</a></li>
+        </ul>
+      </li>
+
+      <div class="nav-section-label">Finance</div>
+      <li>
+        <a href="#">
+          <span class="menu-icon"><i class="fa fa-tasks"></i></span>
+          <span class="menu-label">Task Management <span class="menu-badge zero">0</span></span>
+        </a>
+      </li>
+      <li>
+        <a href="#">
+          <span class="menu-icon"><i class="fa fa-money"></i></span>
+          <span class="menu-label">Fee Payment</span>
+        </a>
+      </li>
+      <li class="has-sub">
+        <a href="#" onclick="toggleMenu(this); return false;">
+          <span class="menu-icon"><i class="fa fa-briefcase"></i></span>
+          <span class="menu-label">Accounting</span>
+          <i class="fa fa-angle-right arrow-icon"></i>
+        </a>
+        <ul class="submenu">
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Generate Monthly Fee</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Types / Fee Heads</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Structure</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Balance Sheet</a></li>
+        </ul>
+      </li>
+
+      <div class="nav-section-label">Operations</div>
+      <li class="has-sub">
+        <a href="#" onclick="toggleMenu(this); return false;">
+          <span class="menu-icon"><i class="fa fa-check-square-o"></i></span>
+          <span class="menu-label">Manage Attendance</span>
+          <i class="fa fa-angle-right arrow-icon"></i>
+        </a>
+        <ul class="submenu">
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Students Attendance</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Attendance</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Attendance Reports</a></li>
+        </ul>
+      </li>
+      <li class="has-sub">
+        <a href="#" onclick="toggleMenu(this); return false;">
+          <span class="menu-icon"><i class="fa fa-cog"></i></span>
+          <span class="menu-label">Settings</span>
+          <i class="fa fa-angle-right arrow-icon"></i>
+        </a>
+        <ul class="submenu">
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> General Settings</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> School Profile</a></li>
+          <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Session Settings</a></li>
+        </ul>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content" id="mainContent">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>
+          <div class="ph-icon"><i class="fa fa-th-large"></i></div>
+          Dashboard
+        </h1>
+        <nav class="breadcrumb-nav">
+          <a href="#">Home</a>
+          <i class="fa fa-angle-right"></i>
+          <span>Dashboard</span>
+        </nav>
+      </div>
+      <div class="page-meta">
+        <div class="session-chip">
+          <i class="fa fa-calendar-check-o"></i>
+          Session: 2026–2027
+        </div>
+        <div class="session-chip" id="liveClock">
+          <i class="fa fa-clock-o"></i>
+          <span id="clockDisplay"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card blue">
+        <div class="stat-icon blue"><i class="fa fa-users"></i></div>
+        <div class="stat-info">
+          <h3>1,248</h3>
+          <p>Total Students</p>
+          <div class="stat-trend up"><i class="fa fa-arrow-up"></i> +12 this month</div>
+        </div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon green"><i class="fa fa-money"></i></div>
+        <div class="stat-info">
+          <h3>₨ 842K</h3>
+          <p>Monthly Fee Collected</p>
+          <div class="stat-trend up"><i class="fa fa-arrow-up"></i> 82% of target</div>
+        </div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-icon red"><i class="fa fa-exclamation-triangle"></i></div>
+        <div class="stat-info">
+          <h3>137</h3>
+          <p>Fee Defaulters</p>
+          <div class="stat-trend down"><i class="fa fa-arrow-down"></i> -8 from last month</div>
+        </div>
+      </div>
+      <div class="stat-card orange">
+        <div class="stat-icon orange"><i class="fa fa-id-badge"></i></div>
+        <div class="stat-info">
+          <h3>84</h3>
+          <p>Total Staff Members</p>
+          <div class="stat-trend up"><i class="fa fa-arrow-up"></i> 79 present today</div>
+        </div>
+      </div>
+      <div class="stat-card purple">
+        <div class="stat-icon purple"><i class="fa fa-check-circle"></i></div>
+        <div class="stat-info">
+          <h3>94%</h3>
+          <p>Today's Attendance</p>
+          <div class="stat-trend up"><i class="fa fa-arrow-up"></i> 1,172 / 1,248</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 1 -->
+    <div class="content-row thirds">
+      <!-- Latest Admissions -->
+      <div class="card">
+        <div class="card-header">
+          <h4>
+            <div class="ch-icon" style="background:linear-gradient(135deg,var(--accent2),#2980b9)"><i class="fa fa-user-plus"></i></div>
+            Latest Admissions
+          </h4>
+          <a href="admissionreport.html" class="card-header-action"><i class="fa fa-external-link"></i> View All</a>
+        </div>
+        <div class="card-body no-pad">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Student</th>
+                <th>Class</th>
+                <th>Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>
+                  <div class="student-cell">
+                    <div class="s-avatar" style="background:linear-gradient(135deg,#3498db,#2980b9)">A</div>
+                    Ahmed Ali
+                  </div>
+                </td>
+                <td>Class 8</td><td>11 Apr</td>
+                <td><span class="badge-pill enrolled"><i class="fa fa-check-circle"></i> Enrolled</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="student-cell">
+                    <div class="s-avatar" style="background:linear-gradient(135deg,#27ae60,#219653)">S</div>
+                    Sara Khan
+                  </div>
+                </td>
+                <td>Class 5</td><td>10 Apr</td>
+                <td><span class="badge-pill enrolled"><i class="fa fa-check-circle"></i> Enrolled</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="student-cell">
+                    <div class="s-avatar" style="background:linear-gradient(135deg,#f39c12,#e67e22)">O</div>
+                    Omar Farooq
+                  </div>
+                </td>
+                <td>Class 10</td><td>09 Apr</td>
+                <td><span class="badge-pill pending"><i class="fa fa-clock-o"></i> Pending</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="student-cell">
+                    <div class="s-avatar" style="background:linear-gradient(135deg,#8e44ad,#6c3483)">Z</div>
+                    Zainab Malik
+                  </div>
+                </td>
+                <td>Class 3</td><td>08 Apr</td>
+                <td><span class="badge-pill enrolled"><i class="fa fa-check-circle"></i> Enrolled</span></td>
+              </tr>
+              <tr>
+                <td>
+                  <div class="student-cell">
+                    <div class="s-avatar" style="background:linear-gradient(135deg,#e74c3c,#c0392b)">H</div>
+                    Hamza Rehman
+                  </div>
+                </td>
+                <td>Class 7</td><td>07 Apr</td>
+                <td><span class="badge-pill unpaid"><i class="fa fa-times-circle"></i> Unpaid</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Fee Collection -->
+      <div class="card">
+        <div class="card-header">
+          <h4>
+            <div class="ch-icon" style="background:linear-gradient(135deg,var(--green),#219653)"><i class="fa fa-money"></i></div>
+            Fee Collection
+          </h4>
+          <span style="font-size:11px;color:var(--text-muted)">April 2026</span>
+        </div>
+        <div class="card-body">
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Class 1–5 (PKR 280K)</span><span>78%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill blue" style="width:78%"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Class 6–8 (PKR 320K)</span><span>85%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill green" style="width:85%"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Class 9–10 (PKR 242K)</span><span>61%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill orange" style="width:61%"></div></div>
+          </div>
+          <div class="progress-item">
+            <div class="progress-label">
+              <span>Defaulters (137 students)</span><span>11%</span>
+            </div>
+            <div class="progress-track"><div class="progress-fill red" style="width:11%"></div></div>
+          </div>
+          <!-- Mini summary -->
+          <div style="margin-top:16px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:12px;">
+            <div style="text-align:center;">
+              <div style="font-size:18px;font-weight:800;color:var(--green)">₨ 842K</div>
+              <div style="color:var(--text-muted);margin-top:2px">Collected</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:18px;font-weight:800;color:var(--orange)">₨ 182K</div>
+              <div style="color:var(--text-muted);margin-top:2px">Pending</div>
+            </div>
+            <div style="text-align:center;">
+              <div style="font-size:18px;font-weight:800;color:var(--accent)">137</div>
+              <div style="color:var(--text-muted);margin-top:2px">Defaulters</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Row 2 -->
+    <div class="content-row">
+      <!-- Activity Feed -->
+      <div class="card">
+        <div class="card-header">
+          <h4>
+            <div class="ch-icon" style="background:linear-gradient(135deg,var(--purple),#6c3483)"><i class="fa fa-history"></i></div>
+            Recent Activity
+          </h4>
+          <a href="#" class="card-header-action">View All</a>
+        </div>
+        <div class="card-body">
+          <ul class="activity-list">
+            <li class="activity-item">
+              <div class="activity-avatar green"><i class="fa fa-money"></i></div>
+              <div class="activity-body">
+                <strong>Fee collected from Ahmad Raza</strong>
+                <span>PKR 4,500 — Class 7</span>
+              </div>
+              <div class="activity-time">5m ago</div>
+            </li>
+            <li class="activity-item">
+              <div class="activity-avatar blue"><i class="fa fa-user-plus"></i></div>
+              <div class="activity-body">
+                <strong>New student admission: Sara Noor</strong>
+                <span>Class 4 — Admitted</span>
+              </div>
+              <div class="activity-time">20m ago</div>
+            </li>
+            <li class="activity-item">
+              <div class="activity-avatar orange"><i class="fa fa-check"></i></div>
+              <div class="activity-body">
+                <strong>Attendance marked for Class 9A</strong>
+                <span>35 present, 2 absent</span>
+              </div>
+              <div class="activity-time">1h ago</div>
+            </li>
+            <li class="activity-item">
+              <div class="activity-avatar green"><i class="fa fa-briefcase"></i></div>
+              <div class="activity-body">
+                <strong>Salary generated for March</strong>
+                <span>84 staff — PKR 1.2M</span>
+              </div>
+              <div class="activity-time">2h ago</div>
+            </li>
+            <li class="activity-item">
+              <div class="activity-avatar red"><i class="fa fa-exclamation"></i></div>
+              <div class="activity-body">
+                <strong>New parent complaint received</strong>
+                <span>Fee related — Pending review</span>
+              </div>
+              <div class="activity-time">3h ago</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Today's Overview -->
+      <div class="card">
+        <div class="card-header">
+          <h4>
+            <div class="ch-icon" style="background:linear-gradient(135deg,var(--orange),#e67e22)"><i class="fa fa-calendar"></i></div>
+            Today's Overview
+          </h4>
+          <span style="font-size:11px;color:var(--text-muted)" id="todayDate"></span>
+        </div>
+        <div class="card-body">
+          <div class="overview-row">
+            <div class="overview-icon blue"><i class="fa fa-users"></i></div>
+            <div class="overview-label">Student Attendance</div>
+            <div class="overview-value">1,172 / 1,248</div>
+            <span class="badge-pill enrolled" style="margin-left:8px">94%</span>
+          </div>
+          <div class="overview-row">
+            <div class="overview-icon green"><i class="fa fa-id-badge"></i></div>
+            <div class="overview-label">Staff Present</div>
+            <div class="overview-value">79 / 84</div>
+            <span class="badge-pill enrolled" style="margin-left:8px">94%</span>
+          </div>
+          <div class="overview-row">
+            <div class="overview-icon orange"><i class="fa fa-money"></i></div>
+            <div class="overview-label">Fee Collected</div>
+            <div class="overview-value">PKR 42,000</div>
+            <span class="badge-pill today" style="margin-left:8px">Today</span>
+          </div>
+          <div class="overview-row">
+            <div class="overview-icon purple"><i class="fa fa-user-plus"></i></div>
+            <div class="overview-label">New Admissions</div>
+            <div class="overview-value">3</div>
+            <span class="badge-pill today" style="margin-left:8px">Today</span>
+          </div>
+          <div class="overview-row">
+            <div class="overview-icon red"><i class="fa fa-exclamation-circle"></i></div>
+            <div class="overview-label">Open Complaints</div>
+            <div class="overview-value">2</div>
+            <span class="badge-pill open-red" style="margin-left:8px">Open</span>
+          </div>
+
+          <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);">
+            <div style="font-size:12px;font-weight:600;color:#64748b;margin-bottom:10px;text-transform:uppercase;letter-spacing:.5px;">Quick Links</div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;">
+              <a href="admitstudent.html" style="flex:1;min-width:80px;background:#f0f7ff;border:1px solid #bfdbfe;color:var(--accent2);border-radius:8px;padding:8px;text-align:center;text-decoration:none;font-size:12px;font-weight:600;">
+                <i class="fa fa-user-plus" style="display:block;font-size:16px;margin-bottom:4px;"></i>Admit
+              </a>
+              <a href="admissionrequest.html" style="flex:1;min-width:80px;background:#fff7ed;border:1px solid #fed7aa;color:var(--orange);border-radius:8px;padding:8px;text-align:center;text-decoration:none;font-size:12px;font-weight:600;">
+                <i class="fa fa-tasks" style="display:block;font-size:16px;margin-bottom:4px;"></i>Requests
+              </a>
+              <a href="admissionreport.html" style="flex:1;min-width:80px;background:#f0fdf4;border:1px solid #bbf7d0;color:var(--green);border-radius:8px;padding:8px;text-align:center;text-decoration:none;font-size:12px;font-weight:600;">
+                <i class="fa fa-file-text" style="display:block;font-size:16px;margin-bottom:4px;"></i>Reports
+              </a>
+              <a href="#" style="flex:1;min-width:80px;background:#fdf4ff;border:1px solid #e9d5ff;color:var(--purple);border-radius:8px;padding:8px;text-align:center;text-decoration:none;font-size:12px;font-weight:600;">
+                <i class="fa fa-money" style="display:block;font-size:16px;margin-bottom:4px;"></i>Fee
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const sidebar = document.getElementById('sidebar');
+  const mainContent = document.getElementById('mainContent');
+  const menuToggle = document.getElementById('menuToggle');
+  const overlay = document.getElementById('sidebarOverlay');
+  const menuSearch = document.getElementById('menuSearch');
+  let sidebarCollapsed = false;
+
+  menuToggle.addEventListener('click', function() {
+    if (window.innerWidth <= 768) {
+      sidebar.classList.toggle('mobile-open');
+      overlay.classList.toggle('active');
+    } else {
+      sidebarCollapsed = !sidebarCollapsed;
+      sidebar.classList.toggle('collapsed', sidebarCollapsed);
+      mainContent.classList.toggle('expanded', sidebarCollapsed);
+    }
+  });
+
+  overlay.addEventListener('click', function() {
+    sidebar.classList.remove('mobile-open');
+    overlay.classList.remove('active');
+  });
+
+  function toggleMenu(el) {
+    const li = el.closest('li');
+    const submenu = li.querySelector(':scope > .submenu');
+    if (!submenu) return;
+    const isOpen = li.classList.contains('open');
+    li.classList.toggle('open', !isOpen);
+    submenu.classList.toggle('open', !isOpen);
+  }
+
+  if (menuSearch) {
+    menuSearch.addEventListener('input', function() {
+      const q = this.value.toLowerCase().trim();
+      document.querySelectorAll('#mainMenu li').forEach(function(li) {
+        if (!q) { li.classList.remove('menu-hidden'); return; }
+        const text = li.textContent.toLowerCase();
+        li.classList.toggle('menu-hidden', !text.includes(q));
+        if (text.includes(q)) {
+          let p = li.parentElement;
+          while (p && p.id !== 'mainMenu') {
+            if (p.classList.contains('submenu')) {
+              p.classList.add('open');
+              const pl = p.closest('li.has-sub');
+              if (pl) pl.classList.add('open');
+            }
+            p = p.parentElement;
+          }
+        }
+      });
+    });
+  }
+
+  // Clock
+  function updateClock() {
+    const now = new Date();
+    document.getElementById('clockDisplay').textContent = now.toLocaleTimeString('en-PK', {hour:'2-digit',minute:'2-digit'});
+  }
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  // Today date
+  const opts = {weekday:'short', day:'numeric', month:'short', year:'numeric'};
+  document.getElementById('todayDate').textContent = new Date().toLocaleDateString('en-PK', opts);
+</script>
+</body>
+</html>

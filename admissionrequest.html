@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admission Requests | START WELL EDUCATION</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ===== TABLE TOOLBAR ===== */
+.table-toolbar {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 12px; margin-bottom: 16px;
+}
+.table-search-wrap { position: relative; }
+.table-search-wrap input {
+  padding: 9px 12px 9px 36px; border: 1px solid var(--border); border-radius: 8px;
+  font-size: 13px; color: #334155; outline: none; width: 240px; transition: all .2s;
+}
+.table-search-wrap input:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(52,152,219,0.12); }
+.table-search-wrap .fa-search { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 13px; }
+.export-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* ===== ENHANCED TABLE ===== */
+.request-table-wrap { overflow-x: auto; border-radius: var(--radius-sm); }
+.request-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 780px; }
+.request-table thead th {
+  background: #f1f5f9; padding: 11px 14px; text-align: left;
+  font-weight: 700; color: #64748b; border-bottom: 2px solid var(--border);
+  font-size: 11px; text-transform: uppercase; letter-spacing: 0.7px; white-space: nowrap;
+}
+.request-table thead th:first-child { width: 50px; text-align: center; }
+.request-table td { padding: 12px 14px; border-bottom: 1px solid #f1f5f9; color: #475569; vertical-align: middle; }
+.request-table tbody tr:hover td { background: #f8fafc; }
+.request-table tbody tr:last-child td { border-bottom: none; }
+
+.student-cell { display: flex; align-items: center; gap: 10px; }
+.s-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.s-name { font-weight: 600; color: #1e293b; font-size: 13px; }
+.s-detail { font-size: 11px; color: var(--text-muted); }
+
+.action-btns { display: flex; gap: 6px; }
+.action-btn { padding: 5px 11px; border-radius: 6px; border: none; cursor: pointer; font-size: 11.5px; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; transition: all .18s; }
+.action-btn.accept { background: #dcfce7; color: #166534; }
+.action-btn.accept:hover { background: #27ae60; color: #fff; }
+.action-btn.reject { background: #fee2e2; color: #991b1b; }
+.action-btn.reject:hover { background: #e74c3c; color: #fff; }
+.action-btn.view { background: #dbeafe; color: #1e40af; }
+.action-btn.view:hover { background: #3498db; color: #fff; }
+
+/* Empty state */
+.empty-state { text-align: center; padding: 60px 20px; color: var(--text-muted); }
+.empty-state i { font-size: 52px; color: #cbd5e1; margin-bottom: 16px; display: block; }
+.empty-state h4 { font-size: 16px; font-weight: 700; color: #64748b; margin-bottom: 8px; }
+.empty-state p { font-size: 13px; }
+
+/* Pagination */
+.pagination-bar { display: flex; align-items: center; justify-content: space-between; padding: 14px 20px; border-top: 1px solid var(--border); flex-wrap: wrap; gap: 10px; }
+.pagination-info { font-size: 12.5px; color: var(--text-muted); }
+.pagination-btns { display: flex; gap: 4px; }
+.pg-btn { width: 32px; height: 32px; border-radius: 7px; border: 1px solid var(--border); background: #fff; color: #64748b; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 13px; transition: all .15s; }
+.pg-btn:hover { background: var(--accent2); color: #fff; border-color: var(--accent2); }
+.pg-btn.active { background: var(--accent2); color: #fff; border-color: var(--accent2); font-weight: 700; }
+.pg-btn:disabled { opacity: 0.4; cursor: default; }
+
+/* Per-page selector */
+.per-page-wrap { display: flex; align-items: center; gap: 8px; font-size: 12.5px; color: var(--text-muted); }
+.per-page-wrap select { padding: 5px 8px; border: 1px solid var(--border); border-radius: 6px; font-size: 12.5px; color: #334155; outline: none; }
+
+/* Filter bar */
+.filter-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 18px; }
+.filter-chip {
+  padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  border: 1.5px solid transparent; cursor: pointer; transition: all .2s;
+}
+.filter-chip.all { background: #1e293b; color: #fff; border-color: #1e293b; }
+.filter-chip.pending { background: #fff; color: #854d0e; border-color: #fde68a; }
+.filter-chip.pending:hover { background: #fef9c3; }
+.filter-chip.accepted { background: #fff; color: #166534; border-color: #bbf7d0; }
+.filter-chip.accepted:hover { background: #dcfce7; }
+.filter-chip.rejected { background: #fff; color: #991b1b; border-color: #fecaca; }
+.filter-chip.rejected:hover { background: #fee2e2; }
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="header-left">
+    <button class="menu-toggle" id="menuToggle"><i class="fa fa-bars"></i></button>
+    <div class="logo-area">
+      <div class="logo-icon">SW</div>
+      <div class="logo-text">START WELL EDUCATION<small>Admin Dashboard</small></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="hdr-btn" title="Tasks"><i class="fa fa-tasks"></i><span class="badge">3</span></button>
+    <button class="hdr-btn" title="Messages"><i class="fa fa-envelope"></i><span class="badge">7</span></button>
+    <button class="hdr-btn" title="Notifications"><i class="fa fa-bell"></i><span class="badge">12</span></button>
+    <div class="hdr-divider"></div>
+    <div class="user-chip"><div class="user-avatar">AH</div><span>Ali Hussnain</span><i class="fa fa-caret-down"></i></div>
+  </div>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-search">
+      <div class="sidebar-search-wrap"><i class="fa fa-search"></i><input type="text" id="menuSearch" placeholder="Search modules..."></div>
+    </div>
+    <ul class="main-menu" id="mainMenu">
+      <div class="nav-section-label">Main</div>
+      <li><a href="index.html"><span class="menu-icon"><i class="fa fa-th-large"></i></span><span class="menu-label">Dashboard</span></a></li>
+      <div class="nav-section-label">Admissions</div>
+      <li class="has-sub open">
+        <a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-user-plus"></i></span><span class="menu-label">Admission Management</span><i class="fa fa-angle-right arrow-icon"></i></a>
+        <ul class="submenu open">
+          <li><a href="admitstudent.html"><i class="fa fa-circle-o fa-fw"></i> Admit Student</a></li>
+          <li><a href="bulkadmitstudent.html"><i class="fa fa-circle-o fa-fw"></i> Admit Bulk Student</a></li>
+          <li class="active"><a href="admissionrequest.html"><i class="fa fa-circle-o fa-fw"></i> Admission Requests <span class="menu-badge zero">0</span></a></li>
+          <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><i class="fa fa-circle-o fa-fw"></i> Admission Inquiries <i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Inquiries</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Send SMS To Inquiries</a></li></ul></li>
+          <li><a href="admissionreport.html"><i class="fa fa-circle-o fa-fw"></i> Admission Reports</a></li>
+        </ul>
+      </li>
+      <div class="nav-section-label">Students & Staff</div>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-users"></i></span><span class="menu-label">Student Management</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Information</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Promotion</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Birthdays <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Transfer</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Info Reports</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-user"></i></span><span class="menu-label">Parent Accounts</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Accounts</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Account Requests <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Gate Passes</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Dues Report</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Parent Info Reports</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-id-badge"></i></span><span class="menu-label">Staff Management</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Management</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Departments</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Birthdays <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Job Inquiries / CV Bank</a></li></ul></li>
+      <div class="nav-section-label">Finance</div>
+      <li><a href="#"><span class="menu-icon"><i class="fa fa-tasks"></i></span><span class="menu-label">Task Management <span class="menu-badge zero">0</span></span></a></li>
+      <li><a href="#"><span class="menu-icon"><i class="fa fa-money"></i></span><span class="menu-label">Fee Payment</span></a></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-briefcase"></i></span><span class="menu-label">Accounting</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Generate Monthly Fee</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Types / Fee Heads</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Structure</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Balance Sheet</a></li></ul></li>
+      <div class="nav-section-label">Operations</div>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-check-square-o"></i></span><span class="menu-label">Manage Attendance</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Students Attendance</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Attendance</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Attendance Reports</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-cog"></i></span><span class="menu-label">Settings</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> General Settings</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> School Profile</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Session Settings</a></li></ul></li>
+    </ul>
+  </nav>
+
+  <main class="main-content" id="mainContent">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>
+          <div class="ph-icon" style="background:linear-gradient(135deg,#f39c12,#e67e22)"><i class="fa fa-inbox"></i></div>
+          Admission Requests
+        </h1>
+        <nav class="breadcrumb-nav">
+          <a href="index.html">Dashboard</a>
+          <i class="fa fa-angle-right"></i>
+          <a href="#">Admission Management</a>
+          <i class="fa fa-angle-right"></i>
+          <span>Admission Requests</span>
+        </nav>
+      </div>
+      <div class="page-meta">
+        <div class="session-chip"><i class="fa fa-calendar" style="color:var(--green)"></i> Session: 2026–2027</div>
+      </div>
+    </div>
+
+    <!-- Summary mini stats -->
+    <div class="stats-grid" style="grid-template-columns:repeat(auto-fit,minmax(160px,1fr));margin-bottom:22px;">
+      <div class="stat-card orange">
+        <div class="stat-icon orange"><i class="fa fa-inbox"></i></div>
+        <div class="stat-info"><h3>0</h3><p>Total Requests</p></div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-icon blue"><i class="fa fa-clock-o"></i></div>
+        <div class="stat-info"><h3>0</h3><p>Pending</p></div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-icon green"><i class="fa fa-check-circle"></i></div>
+        <div class="stat-info"><h3>0</h3><p>Accepted</p></div>
+      </div>
+      <div class="stat-card red">
+        <div class="stat-icon red"><i class="fa fa-times-circle"></i></div>
+        <div class="stat-info"><h3>0</h3><p>Rejected</p></div>
+      </div>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card">
+      <div class="card-header">
+        <h4>
+          <div class="ch-icon" style="background:linear-gradient(135deg,#f39c12,#e67e22)"><i class="fa fa-list"></i></div>
+          Student Admission Requests
+        </h4>
+        <div style="font-size:12px;color:var(--text-muted)">City Campus Bhimber</div>
+      </div>
+      <div class="card-body">
+
+        <!-- Filter chips -->
+        <div class="filter-bar">
+          <span style="font-size:12px;font-weight:600;color:#64748b">Filter:</span>
+          <button class="filter-chip all">All Requests</button>
+          <button class="filter-chip pending">Pending</button>
+          <button class="filter-chip accepted">Accepted</button>
+          <button class="filter-chip rejected">Rejected</button>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="table-toolbar">
+          <div class="per-page-wrap">
+            Show
+            <select>
+              <option>25</option><option>50</option><option>100</option><option>All</option>
+            </select>
+            entries
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <div class="export-btns">
+              <button class="btn btn-success btn-sm"><i class="fa fa-file-excel-o"></i> Excel</button>
+              <button class="btn btn-warning btn-sm"><i class="fa fa-file-text-o"></i> CSV</button>
+              <button class="btn btn-danger btn-sm"><i class="fa fa-file-pdf-o"></i> PDF</button>
+              <button class="btn btn-outline btn-sm"><i class="fa fa-print"></i> Print</button>
+            </div>
+            <div class="table-search-wrap">
+              <i class="fa fa-search"></i>
+              <input type="text" placeholder="Search requests...">
+            </div>
+          </div>
+        </div>
+
+        <!-- Table -->
+        <div class="request-table-wrap">
+          <table class="request-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Student</th>
+                <th>Parent Name</th>
+                <th>Requested Class</th>
+                <th>Date of Birth</th>
+                <th>Gender</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td colspan="9">
+                  <div class="empty-state">
+                    <i class="fa fa-inbox"></i>
+                    <h4>No Admission Requests Found</h4>
+                    <p>There are currently no pending admission requests. New requests submitted through the parent portal will appear here.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-bar">
+          <div class="pagination-info">Showing 0 to 0 of 0 entries</div>
+          <div class="pagination-btns">
+            <button class="pg-btn" disabled><i class="fa fa-arrow-left"></i></button>
+            <button class="pg-btn" disabled><i class="fa fa-arrow-right"></i></button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  const sidebar = document.getElementById('sidebar');
+  const mainContent = document.getElementById('mainContent');
+  const menuToggle = document.getElementById('menuToggle');
+  const overlay = document.getElementById('sidebarOverlay');
+  const menuSearch = document.getElementById('menuSearch');
+  let sidebarCollapsed = false;
+  menuToggle.addEventListener('click', function() {
+    if (window.innerWidth <= 768) { sidebar.classList.toggle('mobile-open'); overlay.classList.toggle('active'); }
+    else { sidebarCollapsed = !sidebarCollapsed; sidebar.classList.toggle('collapsed', sidebarCollapsed); mainContent.classList.toggle('expanded', sidebarCollapsed); }
+  });
+  overlay.addEventListener('click', function() { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); });
+  function toggleMenu(el) {
+    const li = el.closest('li'); const submenu = li.querySelector(':scope > .submenu'); if (!submenu) return;
+    li.classList.toggle('open', !li.classList.contains('open')); submenu.classList.toggle('open', !submenu.classList.contains('open'));
+  }
+  if (menuSearch) menuSearch.addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    document.querySelectorAll('#mainMenu li').forEach(li => {
+      if (!q) { li.classList.remove('menu-hidden'); return; }
+      li.classList.toggle('menu-hidden', !li.textContent.toLowerCase().includes(q));
+      if (li.textContent.toLowerCase().includes(q)) { let p = li.parentElement; while (p && p.id !== 'mainMenu') { if (p.classList.contains('submenu')) { p.classList.add('open'); const pl = p.closest('li.has-sub'); if (pl) pl.classList.add('open'); } p = p.parentElement; } }
+    });
+  });
+
+  // Filter chips
+  document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', function() {
+      document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('all'));
+      this.style.background = '#1e293b'; this.style.color = '#fff';
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admit Student | START WELL EDUCATION</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" href="shared.css">
+<style>
+/* ===== FORM LAYOUT ===== */
+.admit-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+}
+@media (max-width: 900px) { .admit-grid { grid-template-columns: 1fr; } }
+
+.form-panel {
+  background: var(--card-bg); border-radius: var(--radius);
+  border: 1px solid var(--border); box-shadow: var(--shadow-sm);
+  overflow: hidden; margin-bottom: 20px;
+}
+.form-panel-header {
+  padding: 14px 20px; background: #f8fafc;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; gap: 10px;
+}
+.form-panel-header .fph-icon {
+  width: 32px; height: 32px; border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; color: #fff;
+}
+.form-panel-header h4 { font-size: 14px; font-weight: 700; color: #1e293b; }
+.form-panel-body { padding: 20px; }
+
+.form-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+@media (max-width: 640px) { .form-grid-2, .form-grid-3 { grid-template-columns: 1fr; } }
+
+.form-group { display: flex; flex-direction: column; gap: 5px; }
+.form-group.span-2 { grid-column: span 2; }
+.form-group label { font-size: 12px; font-weight: 600; color: #475569; display: flex; align-items: center; gap: 5px; }
+.form-group label .req { color: var(--accent); }
+
+.input-wrap { position: relative; }
+.input-wrap .inp-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: #94a3b8; font-size: 14px; pointer-events: none; }
+.input-wrap .form-control { padding-left: 36px; }
+.form-control {
+  padding: 9px 12px; border: 1px solid var(--border); border-radius: 8px;
+  font-size: 13px; color: #334155; background: #fff; outline: none;
+  transition: border-color .2s, box-shadow .2s; width: 100%;
+}
+.form-control:focus { border-color: var(--accent2); box-shadow: 0 0 0 3px rgba(52,152,219,0.12); }
+select.form-control { cursor: pointer; }
+
+/* Photo upload section */
+.photo-upload-area {
+  border: 2px dashed var(--border); border-radius: var(--radius-sm);
+  padding: 20px; text-align: center; transition: all .2s; cursor: pointer;
+  background: #f8fafc;
+}
+.photo-upload-area:hover { border-color: var(--accent2); background: #eff8ff; }
+.photo-preview {
+  width: 90px; height: 90px; border-radius: 50%; object-fit: cover;
+  border: 3px solid var(--border); margin: 0 auto 12px;
+  display: block;
+}
+.photo-upload-area p { font-size: 12px; color: var(--text-muted); margin-top: 6px; }
+.photo-btns { display: flex; justify-content: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+/* Toggle section */
+.toggle-section { display: none; margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--border); }
+.toggle-section.visible { display: block; }
+
+/* Notification options */
+.notif-options { display: flex; flex-wrap: wrap; gap: 10px; }
+.notif-option { display: flex; align-items: center; gap: 7px; }
+.notif-option input[type="radio"] { width: 15px; height: 15px; cursor: pointer; }
+.notif-option label { font-size: 12.5px; color: #475569; cursor: pointer; font-weight: 500; }
+
+/* Submit bar */
+.submit-bar {
+  background: #fff; border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 18px 22px; display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 14px; box-shadow: var(--shadow-sm);
+  position: sticky; bottom: 16px; margin-top: 20px;
+}
+.submit-bar-info { font-size: 12.5px; color: var(--text-muted); }
+.submit-bar-info strong { color: #1e293b; }
+.submit-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Progress steps */
+.form-steps { display: flex; align-items: center; gap: 0; margin-bottom: 24px; }
+.step {
+  flex: 1; text-align: center; position: relative;
+  padding: 12px 8px; font-size: 12px; font-weight: 600;
+  color: var(--text-muted);
+}
+.step::after {
+  content: ''; position: absolute; top: 50%; right: -1px;
+  width: 2px; height: 50%; background: var(--border); transform: translateY(-50%);
+}
+.step:last-child::after { display: none; }
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%; background: var(--border);
+  color: #94a3b8; font-weight: 700; font-size: 12px;
+  display: flex; align-items: center; justify-content: center; margin: 0 auto 5px;
+  transition: all .2s;
+}
+.step.done .step-num { background: var(--green); color: #fff; }
+.step.active .step-num { background: var(--accent2); color: #fff; }
+.step.active { color: var(--accent2); }
+.step.done { color: var(--green); }
+
+/* Camera UI */
+.camera-container { display: none; margin-top: 12px; }
+.camera-container video { width: 100%; border-radius: 8px; border: 2px solid var(--border); }
+</style>
+</head>
+<body>
+
+<header class="top-header">
+  <div class="header-left">
+    <button class="menu-toggle" id="menuToggle"><i class="fa fa-bars"></i></button>
+    <div class="logo-area">
+      <div class="logo-icon">SW</div>
+      <div class="logo-text">START WELL EDUCATION<small>Admin Dashboard</small></div>
+    </div>
+  </div>
+  <div class="header-right">
+    <button class="hdr-btn" title="Tasks"><i class="fa fa-tasks"></i><span class="badge">3</span></button>
+    <button class="hdr-btn" title="Messages"><i class="fa fa-envelope"></i><span class="badge">7</span></button>
+    <button class="hdr-btn" title="Notifications"><i class="fa fa-bell"></i><span class="badge">12</span></button>
+    <div class="hdr-divider"></div>
+    <div class="user-chip"><div class="user-avatar">AH</div><span>Ali Hussnain</span><i class="fa fa-caret-down"></i></div>
+  </div>
+</header>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <div class="sidebar-search">
+      <div class="sidebar-search-wrap"><i class="fa fa-search"></i><input type="text" id="menuSearch" placeholder="Search modules..."></div>
+    </div>
+    <ul class="main-menu" id="mainMenu">
+      <div class="nav-section-label">Main</div>
+      <li><a href="index.html"><span class="menu-icon"><i class="fa fa-th-large"></i></span><span class="menu-label">Dashboard</span></a></li>
+      <div class="nav-section-label">Admissions</div>
+      <li class="has-sub open">
+        <a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-user-plus"></i></span><span class="menu-label">Admission Management</span><i class="fa fa-angle-right arrow-icon"></i></a>
+        <ul class="submenu open">
+          <li class="active"><a href="admitstudent.html"><i class="fa fa-circle-o fa-fw"></i> Admit Student</a></li>
+          <li><a href="bulkadmitstudent.html"><i class="fa fa-circle-o fa-fw"></i> Admit Bulk Student</a></li>
+          <li><a href="admissionrequest.html"><i class="fa fa-circle-o fa-fw"></i> Admission Requests <span class="menu-badge zero">0</span></a></li>
+          <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><i class="fa fa-circle-o fa-fw"></i> Admission Inquiries <i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Inquiries</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Send SMS To Inquiries</a></li></ul></li>
+          <li><a href="admissionreport.html"><i class="fa fa-circle-o fa-fw"></i> Admission Reports</a></li>
+        </ul>
+      </li>
+      <div class="nav-section-label">Students & Staff</div>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-users"></i></span><span class="menu-label">Student Management</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Information</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Promotion</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Birthdays</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Transfer</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Info Reports</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-user"></i></span><span class="menu-label">Parent Accounts</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Accounts</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Account Requests</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Gate Passes</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Dues Report</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-id-badge"></i></span><span class="menu-label">Staff Management</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Management</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Departments</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Birthdays</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Job Inquiries / CV Bank</a></li></ul></li>
+      <div class="nav-section-label">Finance</div>
+      <li><a href="#"><span class="menu-icon"><i class="fa fa-tasks"></i></span><span class="menu-label">Task Management</span></a></li>
+      <li><a href="#"><span class="menu-icon"><i class="fa fa-money"></i></span><span class="menu-label">Fee Payment</span></a></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-briefcase"></i></span><span class="menu-label">Accounting</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Generate Monthly Fee</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Types / Fee Heads</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Structure</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Balance Sheet</a></li></ul></li>
+      <div class="nav-section-label">Operations</div>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-check-square-o"></i></span><span class="menu-label">Manage Attendance</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Students Attendance</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Attendance</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Attendance Reports</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-cog"></i></span><span class="menu-label">Settings</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> General Settings</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> School Profile</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Session Settings</a></li></ul></li>
+    </ul>
+  </nav>
+
+  <main class="main-content" id="mainContent">
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-header-left">
+        <h1>
+          <div class="ph-icon" style="background:linear-gradient(135deg,#3498db,#2980b9)"><i class="fa fa-user-plus"></i></div>
+          Admit Student
+        </h1>
+        <nav class="breadcrumb-nav">
+          <a href="index.html">Dashboard</a>
+          <i class="fa fa-angle-right"></i>
+          <a href="#">Admission Management</a>
+          <i class="fa fa-angle-right"></i>
+          <span>Student Admission Form</span>
+        </nav>
+      </div>
+      <div class="page-meta">
+        <div class="session-chip"><i class="fa fa-calendar" style="color:var(--green)"></i> Session: 2026–2027</div>
+        <div class="session-chip"><i class="fa fa-building" style="color:var(--accent2)"></i> City Campus Bhimber</div>
+      </div>
+    </div>
+
+    <!-- Form Steps Indicator -->
+    <div class="card" style="margin-bottom:20px;">
+      <div class="card-body" style="padding:16px 24px;">
+        <div class="form-steps">
+          <div class="step active">
+            <div class="step-num">1</div>
+            Student Info
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            Parent Info
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            Academic Info
+          </div>
+          <div class="step">
+            <div class="step-num">4</div>
+            Confirm
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <form id="studentaddform" enctype="multipart/form-data">
+      <div class="admit-grid">
+
+        <!-- LEFT COLUMN -->
+        <div>
+          <!-- Student Information -->
+          <div class="form-panel">
+            <div class="form-panel-header">
+              <div class="fph-icon" style="background:linear-gradient(135deg,#3498db,#2980b9)"><i class="fa fa-graduation-cap"></i></div>
+              <h4>Student Information</h4>
+            </div>
+            <div class="form-panel-body">
+              <div class="form-grid-2" style="margin-bottom:14px;">
+                <div class="form-group">
+                  <label><i class="fa fa-user" style="color:#94a3b8"></i> Student Name <span class="req">*</span></label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-graduation-cap"></i>
+                    <input type="text" class="form-control" name="name" id="name" placeholder="Full name" required>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label><i class="fa fa-venus-mars" style="color:#94a3b8"></i> Gender <span class="req">*</span></label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-male"></i>
+                    <select name="sex" class="form-control">
+                      <option value="">Select gender</option>
+                      <option value="male">Male</option>
+                      <option value="female">Female</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label><i class="fa fa-calendar" style="color:#94a3b8"></i> Date of Birth <span class="req">*</span></label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-calendar"></i>
+                    <input type="date" class="form-control" name="birthday" id="birthday">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label><i class="fa fa-map-marker" style="color:#94a3b8"></i> Place of Birth</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-map-marker"></i>
+                    <input type="text" class="form-control" name="birthplace" placeholder="City / Town">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label><i class="fa fa-child" style="color:#94a3b8"></i> B-Form Number</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-child"></i>
+                    <input type="text" class="form-control" name="bform" placeholder="NADRA B-Form number (if any)">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label><i class="fa fa-moon-o" style="color:#94a3b8"></i> Religion</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-moon-o"></i>
+                    <input type="text" class="form-control" name="religion" placeholder="Religion / Faith">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label><i class="fa fa-font" style="color:#94a3b8"></i> Surname / Caste</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-font"></i>
+                    <input type="text" class="form-control" name="surname" placeholder="Family surname">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label><i class="fa fa-bus" style="color:#94a3b8"></i> Transport Route</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-bus"></i>
+                    <select name="transport_id" class="form-control">
+                      <option value="">No transport</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Photo Upload -->
+              <div class="form-group" style="margin-top:4px;">
+                <label><i class="fa fa-camera" style="color:#94a3b8"></i> Student Photo</label>
+                <div class="photo-upload-area" id="photoDropZone">
+                  <img src="https://via.placeholder.com/90/e2e8f0/94a3b8?text=Photo" class="photo-preview" id="photoPreview" alt="Student photo">
+                  <p>Click to upload or drag & drop<br><span style="font-size:11px">JPG, PNG — max 2MB</span></p>
+                  <input type="file" name="userfile" accept="image/*" id="imageInput" style="display:none">
+                  <div class="photo-btns">
+                    <button type="button" class="btn btn-outline btn-sm" onclick="document.getElementById('imageInput').click()"><i class="fa fa-upload"></i> Upload Photo</button>
+                    <button type="button" class="btn btn-primary btn-sm" id="launchCameraBtn"><i class="fa fa-camera"></i> Capture Live</button>
+                  </div>
+                </div>
+                <div class="camera-container" id="cameraContainer">
+                  <video id="cameraView" autoplay playsinline muted></video>
+                  <div style="text-align:center;margin-top:10px;">
+                    <button type="button" class="btn btn-primary btn-sm" id="captureBtn"><i class="fa fa-camera"></i> Take Photo</button>
+                    <button type="button" class="btn btn-outline btn-sm" id="stopCameraBtn"><i class="fa fa-times"></i> Cancel</button>
+                  </div>
+                </div>
+                <input type="hidden" name="capturedImageData" id="capturedImageData">
+              </div>
+            </div>
+          </div>
+
+          <!-- Other Settings -->
+          <div class="form-panel">
+            <div class="form-panel-header">
+              <div class="fph-icon" style="background:linear-gradient(135deg,#8e44ad,#6c3483)"><i class="fa fa-sliders"></i></div>
+              <h4>Admission Settings</h4>
+            </div>
+            <div class="form-panel-body">
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label>Create Parent Account</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-user-circle"></i>
+                    <select name="parent_account" class="form-control">
+                      <option value="1">Yes</option>
+                      <option value="2">No</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Generate Admission Fee</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-money"></i>
+                    <select name="admission_fee_opt" id="admission_fee_opt" class="form-control" onchange="toggleSection('admission_fee_opt','admFeeSection')">
+                      <option value="2">No</option>
+                      <option value="1">Yes</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="toggle-section" id="admFeeSection">
+                <div class="form-group">
+                  <label>Admission Fee Amount (PKR)</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-money"></i>
+                    <input type="number" class="form-control" name="admission_fee" placeholder="Enter amount">
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-grid-2" style="margin-top:14px;">
+                <div class="form-group">
+                  <label>Generate Other Fee</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-plus-circle"></i>
+                    <select name="custom_fee_generate" id="custom_fee_generate" class="form-control" onchange="toggleSection('custom_fee_generate','otherFeeSection')">
+                      <option value="2">No</option>
+                      <option value="1">Yes</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="toggle-section" id="otherFeeSection">
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label>Fee Type</label>
+                    <select name="custom_fee_title" class="form-control">
+                      <option value="">Select fee type</option>
+                      <option>Previous Amount</option>
+                      <option>Card Fee</option>
+                      <option>Examinations Fee</option>
+                      <option>Books Payment</option>
+                      <option>Admissions Fee</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label>Amount (PKR)</label>
+                    <div class="input-wrap">
+                      <i class="inp-icon fa fa-money"></i>
+                      <input type="number" class="form-control" name="custom_fee_amount" placeholder="Amount">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT COLUMN -->
+        <div>
+          <!-- Parent Information -->
+          <div class="form-panel">
+            <div class="form-panel-header">
+              <div class="fph-icon" style="background:linear-gradient(135deg,#27ae60,#219653)"><i class="fa fa-user"></i></div>
+              <h4>Parent / Guardian Information</h4>
+            </div>
+            <div class="form-panel-body">
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label><span class="req">*</span> Father CNIC</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-id-card"></i>
+                    <input type="text" class="form-control" name="cnic" id="cnic" placeholder="Without dashes e.g. 3460212345678">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label><span class="req">*</span> Father Name</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-user"></i>
+                    <input type="text" class="form-control" name="pname" id="pname" placeholder="Father's full name">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Father Email</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-envelope"></i>
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Email address">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label><span class="req">*</span> Father Phone</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-phone"></i>
+                    <input type="text" class="form-control" name="phone" id="phone" placeholder="e.g. 3482258263">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Mother Phone</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-phone"></i>
+                    <input type="text" class="form-control" name="mphone" placeholder="e.g. 3482258263">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>WhatsApp Number</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-whatsapp"></i>
+                    <input type="text" class="form-control" name="whatsapp" id="whatsapp" placeholder="WhatsApp number">
+                  </div>
+                </div>
+                <div class="form-group span-2">
+                  <label>Home Address</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-home"></i>
+                    <input type="text" class="form-control" name="address" id="address" placeholder="Full home address">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Academic Information -->
+          <div class="form-panel">
+            <div class="form-panel-header">
+              <div class="fph-icon" style="background:linear-gradient(135deg,#e74c3c,#c0392b)"><i class="fa fa-bank"></i></div>
+              <h4>Academic Information</h4>
+            </div>
+            <div class="form-panel-body">
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label>Student Code <span class="req">*</span></label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-tag"></i>
+                    <input type="text" class="form-control" name="student_code" value="ST000251-2" id="student_code">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>G.R Number</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-hashtag"></i>
+                    <input type="text" class="form-control" name="gr_no" placeholder="General register number">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Campus</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-building"></i>
+                    <select name="campus_id" class="form-control">
+                      <option value="2">CITY CAMPUS BHIMBER</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Class <span class="req">*</span></label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-book"></i>
+                    <select name="class_id" id="class_id" class="form-control">
+                      <option value="">Select class</option>
+                      <option value="12">PG</option>
+                      <option value="18">M1</option>
+                      <option value="19">M2</option>
+                      <option value="20">Class One</option>
+                      <option value="21">Class Two</option>
+                      <option value="22">Class Three</option>
+                      <option value="23">Class Four</option>
+                      <option value="24">Class Five</option>
+                      <option value="25">Class Six</option>
+                      <option value="13">Class Seven</option>
+                      <option value="26">Class Eight Blue</option>
+                      <option value="27">Class Eight</option>
+                      <option value="17">Pre Ninth</option>
+                      <option value="15">Class Nine</option>
+                      <option value="16">Class Ten</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Section</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-sitemap"></i>
+                    <select name="section_id" id="section_selector_holder" class="form-control">
+                      <option value="">Select class first</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Monthly Fee (PKR) <span class="req">*</span></label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-money"></i>
+                    <input type="number" class="form-control" name="fee" id="fee" placeholder="Monthly fee amount">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Discounted Student?</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-percent"></i>
+                    <select name="discounted" id="discounted" class="form-control" onchange="toggleSection('discounted','discountSection')">
+                      <option value="2">No</option>
+                      <option value="1">Yes</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Admission Date <span class="req">*</span></label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-calendar-plus-o"></i>
+                    <input type="date" class="form-control" name="admission_date" id="admission_date">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Previous School</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-institution"></i>
+                    <input type="text" class="form-control" name="old_school" placeholder="Name of previous school">
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label>Reference / Remarks</label>
+                  <div class="input-wrap">
+                    <i class="inp-icon fa fa-pencil"></i>
+                    <input type="text" class="form-control" name="admission_reference" placeholder="Any remarks...">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Discount section -->
+              <div class="toggle-section" id="discountSection">
+                <div class="form-grid-2" style="margin-top:0;">
+                  <div class="form-group">
+                    <label>Discount Amount (PKR)</label>
+                    <div class="input-wrap">
+                      <i class="inp-icon fa fa-minus-circle"></i>
+                      <input type="number" class="form-control" name="discount_amount" id="discount_amount" placeholder="Discount amount">
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <label>Discount Reason</label>
+                    <div class="input-wrap">
+                      <i class="inp-icon fa fa-info-circle"></i>
+                      <input type="text" class="form-control" name="discount_title" placeholder="Reason for discount">
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Notification -->
+              <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);">
+                <label style="font-size:12px;font-weight:600;color:#475569;margin-bottom:10px;display:block;"><i class="fa fa-bell" style="color:#94a3b8;margin-right:4px"></i> Admission Notification</label>
+                <div class="notif-options">
+                  <div class="notif-option"><input type="radio" name="notification_type" value="1" id="n1"><label for="n1">WhatsApp &amp; SMS</label></div>
+                  <div class="notif-option"><input type="radio" name="notification_type" value="2" id="n2"><label for="n2">WhatsApp Only</label></div>
+                  <div class="notif-option"><input type="radio" name="notification_type" value="3" id="n3"><label for="n3">SMS Only</label></div>
+                  <div class="notif-option"><input type="radio" name="notification_type" value="0" id="n4"><label for="n4">Don't Notify</label></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit Bar -->
+      <div class="submit-bar">
+        <div class="submit-bar-info">
+          <strong>City Campus Bhimber</strong> &nbsp;•&nbsp; Session 2026–2027 &nbsp;•&nbsp;
+          All fields marked <span style="color:var(--accent)">*</span> are required
+        </div>
+        <div class="submit-actions">
+          <button type="reset" class="btn btn-outline"><i class="fa fa-refresh"></i> Reset Form</button>
+          <button type="submit" class="btn btn-primary" id="studentaddbtn">
+            <i class="fa fa-check-circle"></i> Add Student
+            <span id="btnLoader" style="display:none"><i class="fa fa-spinner fa-spin"></i></span>
+          </button>
+          <a href="#" id="print_form_btn" class="btn btn-success" style="display:none"><i class="fa fa-print"></i> Print Admission Form</a>
+          <a href="#" id="print_voucher_btn" class="btn btn-warning" style="display:none"><i class="fa fa-print"></i> Print Fee Voucher</a>
+        </div>
+      </div>
+
+    </form>
+  </main>
+</div>
+
+<script>
+  const sidebar = document.getElementById('sidebar');
+  const mainContent = document.getElementById('mainContent');
+  const menuToggle = document.getElementById('menuToggle');
+  const overlay = document.getElementById('sidebarOverlay');
+  const menuSearch = document.getElementById('menuSearch');
+  let sidebarCollapsed = false;
+  menuToggle.addEventListener('click', function() {
+    if (window.innerWidth <= 768) { sidebar.classList.toggle('mobile-open'); overlay.classList.toggle('active'); }
+    else { sidebarCollapsed = !sidebarCollapsed; sidebar.classList.toggle('collapsed', sidebarCollapsed); mainContent.classList.toggle('expanded', sidebarCollapsed); }
+  });
+  overlay.addEventListener('click', function() { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); });
+  function toggleMenu(el) {
+    const li = el.closest('li'); const submenu = li.querySelector(':scope > .submenu'); if (!submenu) return;
+    li.classList.toggle('open', !li.classList.contains('open')); submenu.classList.toggle('open', !submenu.classList.contains('open'));
+  }
+  if (menuSearch) menuSearch.addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    document.querySelectorAll('#mainMenu li').forEach(li => {
+      if (!q) { li.classList.remove('menu-hidden'); return; }
+      li.classList.toggle('menu-hidden', !li.textContent.toLowerCase().includes(q));
+      if (li.textContent.toLowerCase().includes(q)) { let p = li.parentElement; while (p && p.id !== 'mainMenu') { if (p.classList.contains('submenu')) { p.classList.add('open'); const pl = p.closest('li.has-sub'); if (pl) pl.classList.add('open'); } p = p.parentElement; } }
+    });
+  });
+
+  // Toggle conditional sections
+  function toggleSection(selectId, sectionId) {
+    const val = document.getElementById(selectId).value;
+    const section = document.getElementById(sectionId);
+    section.classList.toggle('visible', val === '1');
+  }
+
+  // Photo preview on file select
+  document.getElementById('imageInput').addEventListener('change', function() {
+    if (this.files && this.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => { document.getElementById('photoPreview').src = e.target.result; };
+      reader.readAsDataURL(this.files[0]);
+    }
+  });
+
+  // Camera logic
+  let cameraStream = null;
+  document.getElementById('launchCameraBtn').addEventListener('click', async function() {
+    try {
+      cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+      document.getElementById('cameraView').srcObject = cameraStream;
+      document.getElementById('cameraContainer').style.display = 'block';
+      this.style.display = 'none';
+    } catch (e) {
+      alert('Camera access denied or unavailable.');
+    }
+  });
+  document.getElementById('captureBtn').addEventListener('click', function() {
+    const video = document.getElementById('cameraView');
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth; canvas.height = video.videoHeight;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    const dataURL = canvas.toDataURL('image/png');
+    document.getElementById('photoPreview').src = dataURL;
+    document.getElementById('capturedImageData').value = dataURL.replace(/^data:image\/(png|jpeg);base64,/, '');
+    stopCamera();
+  });
+  document.getElementById('stopCameraBtn').addEventListener('click', stopCamera);
+  function stopCamera() {
+    if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
+    document.getElementById('cameraContainer').style.display = 'none';
+    document.getElementById('launchCameraBtn').style.display = 'inline-flex';
+  }
+
+  // Form submit
+  document.getElementById('studentaddform').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value.trim();
+    const pname = document.getElementById('pname').value.trim();
+    const classId = document.getElementById('class_id').value;
+    const fee = document.getElementById('fee').value;
+    if (!name || !pname || !classId || !fee) {
+      alert('Please fill in all required fields: Student Name, Father Name, Class, and Monthly Fee.');
+      return;
+    }
+    const btn = document.getElementById('studentaddbtn');
+    btn.disabled = true;
+    document.getElementById('btnLoader').style.display = 'inline';
+    setTimeout(() => {
+      btn.disabled = false;
+      document.getElementById('btnLoader').style.display = 'none';
+      document.getElementById('print_form_btn').style.display = 'inline-flex';
+      document.getElementById('print_voucher_btn').style.display = 'inline-flex';
+      alert('Student added successfully!');
+    }, 1500);
+  });
+
+  // Set today's date as default admission date
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('admission_date').value = today;
+</script>
+</body>
+</html>
