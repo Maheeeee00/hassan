@@ -5,59 +5,166 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admission Reports | START WELL EDUCATION</title>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet">
-<link rel="stylesheet" href="shared.css">
 <style>
-.report-cards-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 18px; margin-bottom: 26px;
+/* ===== RESET & TOKENS ===== */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --sidebar-w: 265px;
+  --sidebar-bg: #1e2a38;
+  --sidebar-hover: #28384a;
+  --accent: #e74c3c;
+  --accent2: #3498db;
+  --text-light: #ecf0f1;
+  --text-muted: #8fa3b1;
+  --submenu-bg: #192533;
+  --submenu2-bg: #141f2b;
+  --header-h: 60px;
+  --body-bg: #f0f3f7;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --green: #27ae60;
+  --orange: #f39c12;
+  --purple: #8e44ad;
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.10);
+  --radius: 12px;
+  --radius-sm: 8px;
 }
-.rpt-stat {
-  border-radius: var(--radius); padding: 22px 20px;
-  color: #fff; position: relative; overflow: hidden;
-  box-shadow: var(--shadow-md); transition: transform .2s;
+html, body { height: 100%; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; font-size: 14px; }
+body { display: flex; flex-direction: column; background: var(--body-bg); color: #334155; overflow-x: hidden; }
+
+/* HEADER */
+.top-header { height: var(--header-h); background: linear-gradient(135deg, #1e2a38 0%, #0f1923 100%); display: flex; align-items: center; justify-content: space-between; padding: 0 22px; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 12px rgba(0,0,0,0.35); }
+.header-left { display: flex; align-items: center; gap: 16px; }
+.menu-toggle { background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); color: var(--text-light); font-size: 18px; cursor: pointer; padding: 7px 10px; border-radius: 8px; transition: all .2s; }
+.menu-toggle:hover { background: rgba(255,255,255,0.14); }
+.logo-area { display: flex; align-items: center; gap: 10px; }
+.logo-icon { width: 36px; height: 36px; background: var(--accent); border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #fff; font-weight: 800; }
+.logo-text { color: var(--text-light); font-size: 16px; font-weight: 700; letter-spacing: 0.3px; line-height: 1.1; }
+.logo-text small { display: block; font-size: 10px; color: var(--text-muted); font-weight: 400; letter-spacing: 1px; text-transform: uppercase; }
+.header-right { display: flex; align-items: center; gap: 6px; }
+.hdr-btn { position: relative; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.1); color: var(--text-light); font-size: 16px; cursor: pointer; width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; transition: all .2s; }
+.hdr-btn:hover { background: rgba(255,255,255,0.14); }
+.hdr-btn .badge { position: absolute; top: -4px; right: -4px; background: var(--accent); color: #fff; border-radius: 50%; width: 16px; height: 16px; font-size: 9px; display: flex; align-items: center; justify-content: center; border: 2px solid #1e2a38; }
+.hdr-divider { width: 1px; height: 28px; background: rgba(255,255,255,0.12); margin: 0 6px; }
+.user-chip { display: flex; align-items: center; gap: 9px; cursor: pointer; background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.12); padding: 5px 12px 5px 5px; border-radius: 50px; transition: all .2s; }
+.user-chip:hover { background: rgba(255,255,255,0.13); }
+.user-avatar { width: 30px; height: 30px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #c0392b); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; color: #fff; }
+.user-chip span { color: var(--text-light); font-size: 13px; font-weight: 500; }
+.user-chip i { color: var(--text-muted); font-size: 10px; }
+
+/* LAYOUT */
+.layout { display: flex; margin-top: var(--header-h); min-height: calc(100vh - var(--header-h)); }
+
+/* SIDEBAR */
+.sidebar { width: var(--sidebar-w); background: var(--sidebar-bg); position: fixed; left: 0; top: var(--header-h); height: calc(100vh - var(--header-h)); overflow-y: auto; overflow-x: hidden; transition: width .3s cubic-bezier(.4,0,.2,1); z-index: 900; scrollbar-width: thin; scrollbar-color: #2d3f52 transparent; border-right: 1px solid rgba(255,255,255,0.05); }
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: #2d3f52; border-radius: 4px; }
+.sidebar.collapsed { width: 60px; }
+.sidebar-search { padding: 12px 14px; border-bottom: 1px solid rgba(255,255,255,0.06); }
+.sidebar-search-wrap { position: relative; }
+.sidebar-search-wrap .fa-search { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-muted); font-size: 12px; pointer-events: none; }
+.sidebar-search input { width: 100%; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); color: var(--text-light); padding: 8px 10px 8px 30px; border-radius: 8px; font-size: 12px; outline: none; transition: all .2s; }
+.sidebar-search input:focus { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
+.sidebar-search input::placeholder { color: var(--text-muted); }
+.sidebar.collapsed .sidebar-search { display: none; }
+.nav-section-label { padding: 14px 14px 4px; font-size: 9.5px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: #4a6278; }
+.sidebar.collapsed .nav-section-label { display: none; }
+.main-menu { list-style: none; padding: 6px 0 20px; }
+.main-menu > li { margin: 1px 0; }
+.main-menu li > a { display: flex; align-items: center; gap: 11px; padding: 10px 14px; color: #a0b4c5; text-decoration: none; transition: all .18s; white-space: nowrap; overflow: hidden; cursor: pointer; }
+.main-menu li > a:hover { background: var(--sidebar-hover); color: #e2eaf1; }
+.main-menu li.active > a { background: linear-gradient(90deg, rgba(231,76,60,0.22), rgba(231,76,60,0.05)); color: #fff; border-left: 3px solid var(--accent); }
+.main-menu li > a .menu-icon { font-size: 15px; min-width: 22px; text-align: center; color: #5d7a90; transition: color .18s; }
+.main-menu li > a:hover .menu-icon, .main-menu li.active > a .menu-icon { color: var(--accent); }
+.main-menu li > a .menu-label { flex: 1; font-size: 13px; font-weight: 500; }
+.main-menu li > a .arrow-icon { font-size: 10px; color: #4a6278; transition: transform .25s; }
+.main-menu li.open > a .arrow-icon { transform: rotate(90deg); }
+.menu-badge { background: var(--orange); color: #fff; border-radius: 10px; padding: 1px 6px; font-size: 10px; font-weight: 700; min-width: 18px; text-align: center; }
+.menu-badge.zero { background: #3a5068; }
+.submenu { list-style: none; background: var(--submenu-bg); max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+.submenu.open { max-height: 2000px; }
+.submenu li > a { padding: 8px 14px 8px 42px; font-size: 12.5px; color: #7a99ae; display: flex; align-items: center; gap: 8px; text-decoration: none; transition: all .15s; }
+.submenu li > a .fa-circle-o { font-size: 7px; }
+.submenu li > a:hover { color: #e2eaf1; background: rgba(255,255,255,0.04); }
+.submenu li.active > a { color: #ff7c6e; background: rgba(231,76,60,0.1); font-weight: 600; border-left: 2px solid var(--accent); padding-left: 40px; }
+.submenu .submenu { background: var(--submenu2-bg); }
+.submenu .submenu li > a { padding-left: 56px; font-size: 12px; }
+.sidebar.collapsed .main-menu li > a .menu-label,
+.sidebar.collapsed .main-menu li > a .arrow-icon,
+.sidebar.collapsed .main-menu li > a .menu-badge { display: none; }
+.sidebar.collapsed .main-menu li > a { justify-content: center; padding: 13px; }
+.sidebar.collapsed .submenu { display: none; }
+
+/* MAIN CONTENT */
+.main-content { margin-left: var(--sidebar-w); flex: 1; padding: 26px; transition: margin-left .3s cubic-bezier(.4,0,.2,1); min-height: calc(100vh - var(--header-h)); }
+.main-content.expanded { margin-left: 60px; }
+
+/* PAGE HEADER */
+.page-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+.page-header-left h1 { font-size: 22px; font-weight: 700; color: #1e2a38; display: flex; align-items: center; gap: 10px; }
+.page-header-left h1 .ph-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 16px; }
+.breadcrumb-nav { margin-top: 5px; font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
+.breadcrumb-nav a { color: var(--accent2); text-decoration: none; }
+.breadcrumb-nav a:hover { text-decoration: underline; }
+.page-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.session-chip { background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 5px 14px; font-size: 12px; color: #475569; font-weight: 500; display: flex; align-items: center; gap: 6px; }
+
+/* CARD */
+.card { background: var(--card-bg); border-radius: var(--radius); box-shadow: var(--shadow-sm); border: 1px solid var(--border); overflow: hidden; margin-bottom: 20px; }
+.card-header { padding: 15px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; background: #fafbfd; }
+.card-header h4 { font-size: 13.5px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+.card-header h4 .ch-icon { width: 26px; height: 26px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #fff; }
+.card-body { padding: 20px; }
+
+/* BUTTONS */
+.btn { padding: 9px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: 13px; font-weight: 600; display: inline-flex; align-items: center; gap: 7px; transition: all .2s; text-decoration: none; }
+.btn-sm { padding: 6px 12px; font-size: 12px; }
+.btn-outline { background: #fff; border: 1px solid var(--border); color: #475569; }
+.btn-outline:hover { background: #f8fafc; }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .sidebar { transform: translateX(-100%); transition: transform .3s; }
+  .sidebar.mobile-open { transform: translateX(0); width: var(--sidebar-w) !important; }
+  .main-content { margin-left: 0 !important; padding: 16px; }
+  .user-chip span, .user-chip i { display: none; }
 }
+.sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 850; backdrop-filter: blur(2px); }
+.sidebar-overlay.active { display: block; }
+.menu-hidden { display: none !important; }
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+/* ===== PAGE-SPECIFIC ===== */
+.report-cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 18px; margin-bottom: 26px; }
+.rpt-stat { border-radius: var(--radius); padding: 24px 22px; color: #fff; position: relative; overflow: hidden; box-shadow: var(--shadow-md); transition: transform .2s; }
 .rpt-stat:hover { transform: translateY(-3px); }
 .rpt-stat.red { background: linear-gradient(135deg, #e74c3c, #c0392b); }
 .rpt-stat.yellow { background: linear-gradient(135deg, #f39c12, #d68910); }
 .rpt-stat.blue { background: linear-gradient(135deg, #3498db, #2471a3); }
 .rpt-stat.indigo { background: linear-gradient(135deg, #5b6abf, #3d4faa); }
-.rpt-stat::after {
-  content: ''; position: absolute; right: -20px; top: -20px;
-  width: 90px; height: 90px; border-radius: 50%;
-  background: rgba(255,255,255,0.12);
-}
-.rpt-stat .rpt-icon { font-size: 32px; opacity: 0.9; margin-bottom: 10px; }
-.rpt-stat h3 { font-size: 36px; font-weight: 900; line-height: 1; letter-spacing: -1px; }
+.rpt-stat::after { content: ''; position: absolute; right: -24px; top: -24px; width: 100px; height: 100px; border-radius: 50%; background: rgba(255,255,255,0.10); }
+.rpt-stat .rpt-icon { font-size: 30px; opacity: 0.9; margin-bottom: 10px; }
+.rpt-stat h3 { font-size: 38px; font-weight: 900; line-height: 1; letter-spacing: -1px; }
 .rpt-stat p { font-size: 13px; margin-top: 6px; opacity: 0.88; font-weight: 500; }
-.rpt-stat a.view-link {
-  display: inline-flex; align-items: center; gap: 6px;
-  margin-top: 14px; background: rgba(255,255,255,0.22); color: #fff;
-  text-decoration: none; padding: 5px 12px; border-radius: 20px;
-  font-size: 12px; font-weight: 600; transition: background .2s;
-}
+.rpt-stat a.view-link { display: inline-flex; align-items: center; gap: 6px; margin-top: 14px; background: rgba(255,255,255,0.22); color: #fff; text-decoration: none; padding: 5px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; transition: background .2s; }
 .rpt-stat a.view-link:hover { background: rgba(255,255,255,0.38); }
 
-.reports-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 14px;
-}
-@media (max-width: 640px) { .reports-grid { grid-template-columns: 1fr; } }
+.reports-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+@media (max-width: 660px) { .reports-grid { grid-template-columns: 1fr; } }
 
-.report-item {
-  background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm);
-  padding: 18px 20px; display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; transition: all .2s;
-}
+.report-item { background: #fff; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 18px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; transition: all .2s; }
 .report-item:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); border-color: #cbd5e1; }
 .report-item-left { display: flex; align-items: center; gap: 14px; flex: 1; min-width: 0; }
 .ri-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #fff; flex-shrink: 0; }
 .ri-text h5 { font-size: 14px; font-weight: 700; color: #1e293b; margin-bottom: 3px; }
 .ri-text p { font-size: 12px; color: var(--text-muted); line-height: 1.4; }
+.print-btn { padding: 8px 16px; border-radius: 7px; border: 1.5px solid #334155; background: #fff; color: #334155; font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all .2s; white-space: nowrap; text-decoration: none; }
+.print-btn:hover { background: #334155; color: #fff; }
 
-.note-box {
-  background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius-sm);
-  padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start;
-  margin-top: 20px;
-}
+.note-box { background: #fffbeb; border: 1px solid #fde68a; border-radius: var(--radius-sm); padding: 14px 18px; display: flex; gap: 12px; align-items: flex-start; margin-top: 22px; }
 .note-box .note-icon { color: var(--orange); font-size: 18px; margin-top: 2px; flex-shrink: 0; }
 .note-box p { font-size: 13px; color: #92400e; line-height: 1.6; }
 </style>
@@ -77,11 +184,7 @@
     <button class="hdr-btn" title="Messages"><i class="fa fa-envelope"></i><span class="badge">7</span></button>
     <button class="hdr-btn" title="Notifications"><i class="fa fa-bell"></i><span class="badge">12</span></button>
     <div class="hdr-divider"></div>
-    <div class="user-chip">
-      <div class="user-avatar">AH</div>
-      <span>Ali Hussnain</span>
-      <i class="fa fa-caret-down"></i>
-    </div>
+    <div class="user-chip"><div class="user-avatar">AH</div><span>Ali Hussnain</span><i class="fa fa-caret-down"></i></div>
   </div>
 </header>
 
@@ -90,52 +193,38 @@
 <div class="layout">
   <nav class="sidebar" id="sidebar">
     <div class="sidebar-search">
-      <div class="sidebar-search-wrap">
-        <i class="fa fa-search"></i>
-        <input type="text" id="menuSearch" placeholder="Search modules...">
-      </div>
+      <div class="sidebar-search-wrap"><i class="fa fa-search"></i><input type="text" id="menuSearch" placeholder="Search modules..."></div>
     </div>
     <ul class="main-menu" id="mainMenu">
       <div class="nav-section-label">Main</div>
       <li><a href="index.html"><span class="menu-icon"><i class="fa fa-th-large"></i></span><span class="menu-label">Dashboard</span></a></li>
-
       <div class="nav-section-label">Admissions</div>
       <li class="has-sub open">
-        <a href="#" onclick="toggleMenu(this); return false;">
-          <span class="menu-icon"><i class="fa fa-user-plus"></i></span>
-          <span class="menu-label">Admission Management</span>
-          <i class="fa fa-angle-right arrow-icon"></i>
-        </a>
+        <a href="#" onclick="toggleMenu(this);return false;"><span class="menu-icon"><i class="fa fa-user-plus"></i></span><span class="menu-label">Admission Management</span><i class="fa fa-angle-right arrow-icon"></i></a>
         <ul class="submenu open">
           <li><a href="admitstudent.html"><i class="fa fa-circle-o fa-fw"></i> Admit Student</a></li>
           <li><a href="bulkadmitstudent.html"><i class="fa fa-circle-o fa-fw"></i> Admit Bulk Student</a></li>
           <li><a href="admissionrequest.html"><i class="fa fa-circle-o fa-fw"></i> Admission Requests <span class="menu-badge zero">0</span></a></li>
-          <li class="has-sub">
-            <a href="#" onclick="toggleMenu(this); return false;"><i class="fa fa-circle-o fa-fw"></i> Admission Inquiries <i class="fa fa-angle-right arrow-icon"></i></a>
-            <ul class="submenu">
-              <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Inquiries</a></li>
-              <li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Send SMS To Inquiries</a></li>
-            </ul>
-          </li>
+          <li class="has-sub"><a href="#" onclick="toggleMenu(this);return false;"><i class="fa fa-circle-o fa-fw"></i> Admission Inquiries <i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Inquiries</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Send SMS To Inquiries</a></li></ul></li>
           <li class="active"><a href="admissionreport.html"><i class="fa fa-circle-o fa-fw"></i> Admission Reports</a></li>
         </ul>
       </li>
-      <div class="nav-section-label">Students & Staff</div>
-      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-users"></i></span><span class="menu-label">Student Management</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Information</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Promotion</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Birthdays <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Transfer</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Info Reports</a></li></ul></li>
-      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-user"></i></span><span class="menu-label">Parent Accounts</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Accounts</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Account Requests <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Gate Passes</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Dues Report</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Parent Info Reports</a></li></ul></li>
-      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-id-badge"></i></span><span class="menu-label">Staff Management</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Management</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Departments</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Birthdays <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Job Inquiries / CV Bank</a></li></ul></li>
+      <div class="nav-section-label">Students &amp; Staff</div>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this);return false;"><span class="menu-icon"><i class="fa fa-users"></i></span><span class="menu-label">Student Management</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Information</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Promotion</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Birthdays <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Transfer</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Student Info Reports</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this);return false;"><span class="menu-icon"><i class="fa fa-user"></i></span><span class="menu-label">Parent Accounts</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Manage Accounts</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Account Requests <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Gate Passes</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Dues Report</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Parent Info Reports</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this);return false;"><span class="menu-icon"><i class="fa fa-id-badge"></i></span><span class="menu-label">Staff Management</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Management</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Departments</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Birthdays <span class="menu-badge zero">0</span></a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Job Inquiries / CV Bank</a></li></ul></li>
       <div class="nav-section-label">Finance</div>
       <li><a href="#"><span class="menu-icon"><i class="fa fa-tasks"></i></span><span class="menu-label">Task Management <span class="menu-badge zero">0</span></span></a></li>
       <li><a href="#"><span class="menu-icon"><i class="fa fa-money"></i></span><span class="menu-label">Fee Payment</span></a></li>
-      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-briefcase"></i></span><span class="menu-label">Accounting</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Generate Monthly Fee</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Types / Fee Heads</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Structure</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Balance Sheet</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this);return false;"><span class="menu-icon"><i class="fa fa-briefcase"></i></span><span class="menu-label">Accounting</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Generate Monthly Fee</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Types / Fee Heads</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Fee Structure</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Print Balance Sheet</a></li></ul></li>
       <div class="nav-section-label">Operations</div>
-      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-check-square-o"></i></span><span class="menu-label">Manage Attendance</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Students Attendance</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Attendance</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Attendance Reports</a></li></ul></li>
-      <li class="has-sub"><a href="#" onclick="toggleMenu(this); return false;"><span class="menu-icon"><i class="fa fa-cog"></i></span><span class="menu-label">Settings</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> General Settings</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> School Profile</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Session Settings</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this);return false;"><span class="menu-icon"><i class="fa fa-check-square-o"></i></span><span class="menu-label">Manage Attendance</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Students Attendance</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Staff Attendance</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Attendance Reports</a></li></ul></li>
+      <li class="has-sub"><a href="#" onclick="toggleMenu(this);return false;"><span class="menu-icon"><i class="fa fa-cog"></i></span><span class="menu-label">Settings</span><i class="fa fa-angle-right arrow-icon"></i></a><ul class="submenu"><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> General Settings</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> School Profile</a></li><li><a href="#"><i class="fa fa-circle-o fa-fw"></i> Session Settings</a></li></ul></li>
     </ul>
   </nav>
 
   <main class="main-content" id="mainContent">
-    <!-- Page Header -->
+
     <div class="page-header">
       <div class="page-header-left">
         <h1>
@@ -145,7 +234,7 @@
         <nav class="breadcrumb-nav">
           <a href="index.html">Dashboard</a>
           <i class="fa fa-angle-right"></i>
-          <a href="#">Admission Management</a>
+          <span>Admission Management</span>
           <i class="fa fa-angle-right"></i>
           <span>Admission Reports</span>
         </nav>
@@ -155,7 +244,7 @@
       </div>
     </div>
 
-    <!-- Summary Stat Cards -->
+    <!-- Summary stat cards -->
     <div class="report-cards-grid">
       <div class="rpt-stat red">
         <div class="rpt-icon"><i class="fa fa-credit-card"></i></div>
@@ -183,14 +272,14 @@
       </div>
     </div>
 
-    <!-- Printable Reports Panel -->
+    <!-- Printable Reports -->
     <div class="card">
       <div class="card-header">
         <h4>
           <div class="ch-icon" style="background:linear-gradient(135deg,#27ae60,#219653)"><i class="fa fa-print"></i></div>
           Printable Admission Reports
         </h4>
-        <span style="font-size:12px;color:var(--text-muted)">City Campus Bhimber — Session 2026–2027</span>
+        <span style="font-size:12px;color:var(--text-muted)">City Campus Bhimber — 2026–2027</span>
       </div>
       <div class="card-body">
         <div class="reports-grid">
@@ -211,7 +300,7 @@
               <div class="ri-icon" style="background:linear-gradient(135deg,#f39c12,#e67e22)"><i class="fa fa-bar-chart"></i></div>
               <div class="ri-text">
                 <h5>Monthly Admissions</h5>
-                <p>List of total admitted students this month so far.</p>
+                <p>List of total admitted students this month.</p>
               </div>
             </div>
             <a href="#" class="print-btn"><i class="fa fa-print"></i> Print</a>
@@ -236,7 +325,7 @@
                 <p>Class-wise printable information-filled admission forms.</p>
               </div>
             </div>
-            <button class="print-btn" onclick="alert('Select a class to print admission forms.')"><i class="fa fa-print"></i> Print</button>
+            <button class="print-btn"><i class="fa fa-print"></i> Print</button>
           </div>
 
           <div class="report-item">
@@ -265,7 +354,7 @@
 
         <div class="note-box">
           <div class="note-icon"><i class="fa fa-info-circle"></i></div>
-          <p><strong>Note:</strong> Please ensure that all reports are printed in <strong>A4 size</strong> for optimal viewing. Adjust your printer settings accordingly before printing.</p>
+          <p><strong>Note:</strong> Please ensure all reports are printed in <strong>A4 size</strong> for optimal viewing. Adjust your printer settings accordingly before printing.</p>
         </div>
       </div>
     </div>
@@ -279,22 +368,30 @@
   const menuToggle = document.getElementById('menuToggle');
   const overlay = document.getElementById('sidebarOverlay');
   const menuSearch = document.getElementById('menuSearch');
-  let sidebarCollapsed = false;
+  let collapsed = false;
+
   menuToggle.addEventListener('click', function() {
     if (window.innerWidth <= 768) { sidebar.classList.toggle('mobile-open'); overlay.classList.toggle('active'); }
-    else { sidebarCollapsed = !sidebarCollapsed; sidebar.classList.toggle('collapsed', sidebarCollapsed); mainContent.classList.toggle('expanded', sidebarCollapsed); }
+    else { collapsed = !collapsed; sidebar.classList.toggle('collapsed', collapsed); mainContent.classList.toggle('expanded', collapsed); }
   });
-  overlay.addEventListener('click', function() { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); });
+  overlay.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); overlay.classList.remove('active'); });
+
   function toggleMenu(el) {
-    const li = el.closest('li'); const submenu = li.querySelector(':scope > .submenu'); if (!submenu) return;
-    li.classList.toggle('open', !li.classList.contains('open')); submenu.classList.toggle('open', !submenu.classList.contains('open'));
+    const li = el.closest('li'), sub = li.querySelector(':scope>.submenu');
+    if (!sub) return;
+    const open = li.classList.contains('open');
+    li.classList.toggle('open', !open); sub.classList.toggle('open', !open);
   }
-  if (menuSearch) menuSearch.addEventListener('input', function() {
+
+  menuSearch && menuSearch.addEventListener('input', function() {
     const q = this.value.toLowerCase().trim();
     document.querySelectorAll('#mainMenu li').forEach(li => {
       if (!q) { li.classList.remove('menu-hidden'); return; }
       li.classList.toggle('menu-hidden', !li.textContent.toLowerCase().includes(q));
-      if (li.textContent.toLowerCase().includes(q)) { let p = li.parentElement; while (p && p.id !== 'mainMenu') { if (p.classList.contains('submenu')) { p.classList.add('open'); const pl = p.closest('li.has-sub'); if (pl) pl.classList.add('open'); } p = p.parentElement; } }
+      if (li.textContent.toLowerCase().includes(q)) {
+        let p = li.parentElement;
+        while (p && p.id !== 'mainMenu') { if (p.classList.contains('submenu')) { p.classList.add('open'); const pl = p.closest('li.has-sub'); if (pl) pl.classList.add('open'); } p = p.parentElement; }
+      }
     });
   });
 </script>
