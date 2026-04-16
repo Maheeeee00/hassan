@@ -247,70 +247,69 @@
   .print-btn { background: linear-gradient(135deg, var(--accent) 0%, #00a07a 100%); color: white; border: none; border-radius: 9px; padding: 9px 22px; cursor: pointer; font-size: 13px; font-family: var(--sans); font-weight: 700; box-shadow: 0 2px 8px rgba(0,200,150,0.3); transition: all 0.2s; }
   .print-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 14px rgba(0,200,150,0.4); }
 
-  /* ========= INVOICE PRINT — PROFESSIONAL STORE LAYOUT ========= */
-  #print-area { font-family: 'Plus Jakarta Sans', Arial, sans-serif; }
-  .print-page { width: 794px; min-height: 1122px; background: #fff; margin: 32px auto; padding: 0; box-shadow: 0 8px 48px rgba(0,0,0,0.15); position: relative; overflow: hidden; }
-  /* All print elements use only borders + dark text — prints on any printer */
-  .inv-doc { padding: 48px 52px 40px; position: relative; box-sizing: border-box; }
+  /* ========= INVOICE PRINT — STORE TEMPLATE STYLE ========= */
+  #print-area { font-family: Arial, 'Plus Jakarta Sans', sans-serif; }
+  .print-page { width: 794px; min-height: 1122px; background: #fff; margin: 32px auto; padding: 0; box-shadow: 0 8px 48px rgba(0,0,0,0.15); position: relative; }
+  .inv-doc { padding: 36px 44px 36px; box-sizing: border-box; position: relative; }
 
-  /* ---- Header band ---- */
-  .inv-head-band { border-bottom: 3px solid #111; padding-bottom: 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: flex-start; }
-  .inv-brand-name { font-size: 32px; font-weight: 900; color: #111; letter-spacing: -0.03em; line-height: 1; }
-  .inv-brand-sub { font-size: 10px; color: #666; letter-spacing: 0.18em; text-transform: uppercase; margin-top: 5px; font-family: var(--mono); }
-  .inv-brand-addr { font-size: 11px; color: #555; margin-top: 8px; line-height: 1.7; font-family: var(--mono); }
-  .inv-meta-box { text-align: right; }
-  .inv-word { font-size: 38px; font-weight: 900; color: #111; letter-spacing: -0.02em; line-height: 1; margin-bottom: 10px; }
-  .inv-meta-table { font-size: 12px; font-family: var(--mono); color: #333; }
-  .inv-meta-table tr td { padding: 2px 0 2px 16px; }
-  .inv-meta-table tr td:first-child { color: #888; font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; padding-left: 0; text-align: left; }
-  .inv-meta-table tr td:last-child { font-weight: 700; text-align: right; color: #111; }
+  /* ---- TOP HEADER: logo+INVOICE left, store info right ---- */
+  .inv-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 18px; }
+  .inv-top-left { display: flex; align-items: flex-start; gap: 16px; }
+  /* Medical cross icon — pure SVG, always prints */
+  .inv-logo-svg { flex-shrink: 0; margin-top: 4px; }
+  .inv-title-block {}
+  .inv-title-word { font-size: 36px; font-weight: 900; color: #2563c7; letter-spacing: 0.02em; line-height: 1; margin-bottom: 6px; font-family: Arial, sans-serif; }
+  .inv-title-sub { font-size: 11px; color: #555; line-height: 1.6; }
+  .inv-store-block { text-align: right; }
+  .inv-store-name { font-size: 17px; font-weight: 800; color: #111; margin-bottom: 4px; }
+  .inv-store-detail { font-size: 11px; color: #555; line-height: 1.75; }
 
-  /* ---- Parties row ---- */
-  .inv-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 28px; border: 1.5px solid #ddd; }
-  .inv-party-cell { padding: 16px 20px; }
-  .inv-party-cell:first-child { border-right: 1.5px solid #ddd; }
-  .inv-party-heading { font-size: 9px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.18em; color: #888; font-weight: 700; margin-bottom: 8px; }
-  .inv-party-name { font-size: 15px; font-weight: 800; color: #111; margin-bottom: 4px; }
-  .inv-party-detail { font-size: 11px; color: #555; line-height: 1.7; font-family: var(--mono); }
+  /* ---- DIVIDER ---- */
+  .inv-divider { border: none; border-top: 1.5px solid #c0c8e0; margin: 14px 0; }
 
-  /* ---- Items table ---- */
-  .inv-items-table { width: 100%; border-collapse: collapse; margin-bottom: 0; }
-  .inv-items-table thead tr { border-top: 1.5px solid #111; border-bottom: 1.5px solid #111; }
-  .inv-items-table th { padding: 10px 12px; font-size: 10px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.13em; color: #111; font-weight: 700; text-align: left; }
-  .inv-items-table th.r { text-align: right; }
-  .inv-items-table td { padding: 12px 12px; font-size: 13px; color: #222; border-bottom: 1px solid #e8e8e8; vertical-align: top; }
-  .inv-items-table td.r { text-align: right; font-family: var(--mono); }
-  .inv-items-table tbody tr:last-child td { border-bottom: 1.5px solid #111; }
-  .inv-items-table .item-name { font-weight: 700; color: #111; }
-  .inv-items-table .item-disc { font-size: 10px; color: #888; font-family: var(--mono); margin-top: 2px; }
-  .inv-items-table .sr { color: #999; font-family: var(--mono); font-size: 12px; }
+  /* ---- META ROW: invoice info left, Invoice To right ---- */
+  .inv-meta-row { display: grid; grid-template-columns: 1fr 1fr; gap: 0; margin-bottom: 18px; }
+  .inv-meta-left { font-size: 12px; color: #333; line-height: 1.9; }
+  .inv-meta-left span { color: #888; font-size: 11px; display: inline-block; min-width: 90px; }
+  .inv-meta-right { border-left: 1px solid #ddd; padding-left: 24px; }
+  .inv-to-label { font-size: 11px; font-weight: 800; color: #2563c7; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 6px; }
+  .inv-to-name { font-size: 14px; font-weight: 700; color: #111; margin-bottom: 2px; }
+  .inv-to-detail { font-size: 11px; color: #555; line-height: 1.75; }
 
-  /* ---- Totals ---- */
-  .inv-totals-wrap { display: flex; justify-content: flex-end; margin-top: 0; margin-bottom: 28px; }
-  .inv-totals-inner { width: 300px; }
-  .inv-totals-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 12px; font-family: var(--mono); color: #444; border-bottom: 1px solid #eee; }
-  .inv-totals-row:last-child { border-bottom: none; }
-  .inv-totals-row.grand-total { font-size: 16px; font-weight: 900; color: #111; border-top: 2.5px solid #111; border-bottom: 2.5px solid #111; padding: 10px 0; margin-top: 4px; }
+  /* ---- ITEMS TABLE — blue header ---- */
+  .inv-tbl { width: 100%; border-collapse: collapse; margin-bottom: 0; font-size: 12px; }
+  .inv-tbl thead tr { background: #2563c7; }
+  .inv-tbl th { padding: 9px 11px; font-size: 11px; font-weight: 700; text-align: left; color: #fff; letter-spacing: 0.04em; border: 1px solid #1a4fa0; }
+  .inv-tbl th.rc { text-align: center; }
+  .inv-tbl th.rr { text-align: right; }
+  .inv-tbl td { padding: 9px 11px; font-size: 12px; color: #222; border: 1px solid #dde4f0; vertical-align: middle; }
+  .inv-tbl td.rc { text-align: center; }
+  .inv-tbl td.rr { text-align: right; font-family: monospace; }
+  .inv-tbl tbody tr:nth-child(even) td { background: #f4f7ff; }
+  .inv-tbl .td-prod { font-weight: 600; color: #111; }
+  /* Empty placeholder rows */
+  .inv-tbl .empty-row td { color: #ccc; font-size: 11px; }
 
-  /* ---- Status stamp ---- */
-  .inv-stamp { position: absolute; top: 72px; right: 52px; border: 4px solid #111; border-radius: 6px; padding: 6px 20px; transform: rotate(-15deg); opacity: 0.12; font-size: 26px; font-weight: 900; letter-spacing: 0.2em; color: #111; pointer-events: none; text-transform: uppercase; }
+  /* ---- TOTALS right-aligned box ---- */
+  .inv-totals-section { display: flex; justify-content: flex-end; margin-top: 0; margin-bottom: 20px; }
+  .inv-totals-box { width: 260px; border: 1px solid #dde4f0; font-size: 12px; }
+  .inv-totals-box .trow { display: flex; justify-content: space-between; padding: 7px 12px; border-bottom: 1px solid #dde4f0; color: #444; }
+  .inv-totals-box .trow:last-child { border-bottom: none; background: #2563c7; color: #fff; font-weight: 800; font-size: 13px; padding: 9px 12px; }
+  .inv-totals-box .trow span:last-child { font-family: monospace; font-weight: 700; }
 
-  /* ---- Footer ---- */
-  .inv-footer-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px; border-top: 1.5px solid #ddd; padding-top: 20px; }
-  .inv-footer-label { font-size: 9px; font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.16em; color: #888; font-weight: 700; margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
-  .inv-footer-text { font-size: 11px; color: #555; line-height: 1.75; font-family: var(--mono); }
-  .inv-bank-row { display: flex; justify-content: space-between; font-size: 11px; font-family: var(--mono); padding: 2px 0; }
-  .inv-bank-lbl { color: #888; }
-  .inv-bank-val { font-weight: 700; color: #111; }
-  .inv-sig-box { border-top: 1.5px solid #111; margin-top: 40px; padding-top: 6px; font-size: 10px; font-family: var(--mono); color: #888; text-align: center; width: 160px; }
+  /* ---- FOOTER: payment + terms ---- */
+  .inv-footer { border-top: 1.5px solid #c0c8e0; padding-top: 14px; margin-bottom: 16px; }
+  .inv-pay-label { font-size: 11px; font-weight: 800; color: #2563c7; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 5px; }
+  .inv-pay-text { font-size: 11px; color: #444; margin-bottom: 12px; }
+  .inv-terms-label { font-size: 11px; font-weight: 800; color: #333; margin-bottom: 4px; }
+  .inv-terms-list { font-size: 11px; color: #555; line-height: 1.8; list-style: none; padding: 0; }
+  .inv-terms-list li::before { content: ''; }
 
-  /* ---- Thank you bar ---- */
-  .inv-thankyou { text-align: center; border-top: 1px solid #ddd; padding: 18px 0 0; margin-top: 8px; }
-  .inv-thankyou strong { font-size: 14px; font-weight: 800; color: #111; }
-  .inv-thankyou p { font-size: 10px; color: #999; font-family: var(--mono); margin-top: 4px; }
+  /* ---- THANK YOU ---- */
+  .inv-thankyou { text-align: center; padding: 14px 0 4px; font-size: 13px; font-style: italic; color: #2563c7; font-weight: 700; border-top: 1px solid #dde4f0; margin-top: 10px; }
 
-  /* ---- Page footer line ---- */
-  .inv-page-foot { font-size: 9px; font-family: var(--mono); color: #bbb; text-align: center; padding: 14px 0 0; border-top: 1px solid #eee; margin-top: 12px; }
+  /* ---- STATUS STAMP ---- */
+  .inv-stamp { position: absolute; top: 60px; right: 44px; border: 4px solid #2563c7; border-radius: 6px; padding: 5px 16px; transform: rotate(-14deg); opacity: 0.1; font-size: 28px; font-weight: 900; letter-spacing: 0.2em; color: #2563c7; pointer-events: none; text-transform: uppercase; font-family: Arial, sans-serif; }
 
   /* ========= TOAST ========= */
   #margin-preview { padding: 10px 14px; background: var(--blue-subtle); border: 1px solid var(--blue-pale); border-radius: 9px; font-family: var(--mono); font-size: 12px; color: var(--blue); min-height: 38px; display: flex; align-items: center; }
@@ -1415,13 +1414,14 @@ function renderExpenses() {
 function printInvoice(rowIndex) {
   const inv = invoices.find(x => x._row == rowIndex);
   if (!inv) return;
-  const paid = inv.status === 'Paid';
+  const paid      = inv.status === 'Paid';
   const cancelled = inv.status === 'Cancelled';
+  const stampText = paid ? 'PAID' : cancelled ? 'CANCELLED' : 'UNPAID';
 
-  // ---- Compute totals ----
-  let subtotal = 0, totalDisc = 0, taxAmt = 0;
-  let lineRows = '';
+  // ---- Compute line items & totals ----
+  let subtotal = 0, totalDisc = 0;
   const lines = (inv.lines || []).filter(l => l.product);
+  let lineRows = '';
 
   if (lines.length) {
     lines.forEach((l, i) => {
@@ -1431,139 +1431,163 @@ function printInvoice(rowIndex) {
       subtotal  += rowSub;
       totalDisc += rowDisc;
       lineRows += `<tr>
-        <td class="sr" style="width:36px">${i+1}</td>
-        <td>
-          <div class="item-name">${l.product}</div>
-          ${l.disc > 0 ? `<div class="item-disc">Line discount: ${l.disc}%</div>` : ''}
-        </td>
-        <td class="r" style="width:72px">${(l.qty||0).toLocaleString()}</td>
-        <td class="r" style="width:110px">PKR ${(l.unitPrice||0).toLocaleString()}</td>
-        <td class="r" style="width:120px; font-weight:700">PKR ${rowNet.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0})}</td>
+        <td class="td-prod">${l.product}</td>
+        <td class="rc" style="color:#888;font-size:11px">—</td>
+        <td class="rc">${l.qty||0}</td>
+        <td class="rr">PKR ${(l.unitPrice||0).toLocaleString()}</td>
+        <td class="rr">${l.disc > 0 ? l.disc+'%' : '—'}</td>
+        <td class="rr" style="font-weight:700">PKR ${rowNet.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
       </tr>`;
     });
+    // pad to at least 5 rows so table looks full like template
+    for (let i = lines.length; i < 5; i++) {
+      lineRows += `<tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td class="rr">PKR 0.00</td><td class="rr">—</td><td class="rr">PKR 0.00</td></tr>`;
+    }
   } else {
     subtotal = inv.grand || 0;
     lineRows = `<tr>
-      <td class="sr">1</td>
-      <td><div class="item-name">Medical Supplies / Services</div></td>
-      <td class="r">—</td>
-      <td class="r">—</td>
-      <td class="r" style="font-weight:700">PKR ${(inv.grand||0).toLocaleString()}</td>
-    </tr>`;
+      <td class="td-prod">Medical Supplies / Services</td>
+      <td class="rc" style="color:#888">—</td>
+      <td class="rc">1</td>
+      <td class="rr">PKR ${subtotal.toLocaleString()}</td>
+      <td class="rr">—</td>
+      <td class="rr" style="font-weight:700">PKR ${subtotal.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+    </tr>
+    <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td class="rr">PKR 0.00</td><td class="rr">—</td><td class="rr">PKR 0.00</td></tr>
+    <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td class="rr">PKR 0.00</td><td class="rr">—</td><td class="rr">PKR 0.00</td></tr>
+    <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td class="rr">PKR 0.00</td><td class="rr">—</td><td class="rr">PKR 0.00</td></tr>`;
   }
 
-  // Use inv.grand as the true final amount (it has all disc/tax already applied)
-  const grandTotal = inv.grand || 0;
-  // Estimate tax from difference if no line detail
-  const afterDisc = subtotal - totalDisc;
-  taxAmt = grandTotal - afterDisc;
-
-  // ---- Build totals block ----
-  const totalsHTML = `
-    <div class="inv-totals-wrap">
-      <div class="inv-totals-inner">
-        <div class="inv-totals-row"><span>Subtotal</span><span>PKR ${subtotal.toLocaleString()}</span></div>
-        ${totalDisc > 0 ? `<div class="inv-totals-row"><span>Discount</span><span>− PKR ${totalDisc.toLocaleString()}</span></div>` : ''}
-        ${taxAmt > 0 ? `<div class="inv-totals-row"><span>Tax</span><span>+ PKR ${taxAmt.toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:0})}</span></div>` : ''}
-        <div class="inv-totals-row grand-total"><span>TOTAL DUE</span><span>PKR ${grandTotal.toLocaleString()}</span></div>
-      </div>
-    </div>`;
-
-  const stampText = paid ? 'PAID' : cancelled ? 'CANCELLED' : 'UNPAID';
+  const grandTotal  = inv.grand || 0;
+  const afterDisc   = subtotal - totalDisc;
+  const salesTaxAmt = grandTotal - afterDisc > 0 ? grandTotal - afterDisc : 0;
+  const delivCharge = 0;
 
   document.getElementById('print-content').innerHTML = `
     <div class="print-page">
       <div class="inv-doc">
 
-        <!-- STAMP watermark — uses only border+text, always prints -->
+        <!-- STATUS STAMP -->
         <div class="inv-stamp">${stampText}</div>
 
-        <!-- ===== HEADER ===== -->
-        <div class="inv-head-band">
-          <div>
-            <div class="inv-brand-name">Advic Medicare</div>
-            <div class="inv-brand-sub">Medical Supplies &amp; Healthcare</div>
-            <div class="inv-brand-addr">
-              Qazi Street, New Afzal Town, Near Chaklala Scheme 3<br>
-              Rawalpindi, Pakistan &nbsp;|&nbsp; +92-XXX-XXXXXXX<br>
-              contact@advicmedicare.pk
+        <!-- ===== TOP HEADER ===== -->
+        <div class="inv-top">
+          <div class="inv-top-left">
+            <!-- Medical cross — pure SVG, always prints -->
+            <svg class="inv-logo-svg" width="54" height="54" viewBox="0 0 54 54" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="54" height="54" rx="8" fill="#e8eef9"/>
+              <rect x="22" y="8" width="10" height="38" rx="3" fill="#2563c7"/>
+              <rect x="8" y="22" width="38" height="10" rx="3" fill="#2563c7"/>
+            </svg>
+            <div class="inv-title-block">
+              <div class="inv-title-word">INVOICE</div>
+              <div class="inv-title-sub">
+                Advic Medicare<br>
+                Medical Supplies &amp; Healthcare
+              </div>
             </div>
           </div>
-          <div class="inv-meta-box">
-            <div class="inv-word">INVOICE</div>
-            <table class="inv-meta-table">
-              <tr><td>Invoice No.</td><td>${inv.number || '—'}</td></tr>
-              <tr><td>Date</td><td>${fmtDate(inv.date)}</td></tr>
-              <tr><td>Due Date</td><td>${fmtDate(inv.date)}</td></tr>
-              <tr><td>Status</td><td>${inv.status.toUpperCase()}</td></tr>
-            </table>
+          <div class="inv-store-block">
+            <div class="inv-store-name">Advic Medicare</div>
+            <div class="inv-store-detail">
+              Qazi Street, New Afzal Town<br>
+              Near Chaklala Scheme 3, Rawalpindi<br>
+              +92-XXX-XXXXXXX<br>
+              contact@advicmedicare.pk<br>
+              advicmedicare.pk
+            </div>
           </div>
         </div>
 
-        <!-- ===== BILL FROM / TO ===== -->
-        <div class="inv-parties">
-          <div class="inv-party-cell">
-            <div class="inv-party-heading">From</div>
-            <div class="inv-party-name">Advic Medicare</div>
-            <div class="inv-party-detail">
-              Qazi Street, New Afzal Town<br>
-              Near Chaklala Scheme 3, Rawalpindi<br>
-              Pakistan<br>
-              contact@advicmedicare.pk
-            </div>
+        <hr class="inv-divider">
+
+        <!-- ===== META ROW ===== -->
+        <div class="inv-meta-row">
+          <div class="inv-meta-left">
+            <div><span>Invoice No.</span> <strong>${inv.number || '—'}</strong></div>
+            <div><span>Invoice Date</span> ${fmtDate(inv.date)}</div>
+            <div><span>Issue Date</span> ${fmtDate(inv.date)}</div>
           </div>
-          <div class="inv-party-cell">
-            <div class="inv-party-heading">Bill To</div>
-            <div class="inv-party-name">${inv.client}</div>
-            <div class="inv-party-detail">Valued Customer</div>
+          <div class="inv-meta-right">
+            <div class="inv-to-label">Invoice To</div>
+            <div class="inv-to-name">${inv.client}</div>
+            <div class="inv-to-detail">
+              [Contact No.]<br>
+              [Email Address]<br>
+              [Premium Card No.]
+            </div>
           </div>
         </div>
 
         <!-- ===== ITEMS TABLE ===== -->
-        <table class="inv-items-table">
+        <table class="inv-tbl">
           <thead>
             <tr>
-              <th style="width:36px">#</th>
-              <th>Description / Product</th>
-              <th class="r" style="width:72px">Qty</th>
-              <th class="r" style="width:110px">Unit Price</th>
-              <th class="r" style="width:120px">Amount</th>
+              <th style="width:34%">Description in Detail</th>
+              <th class="rc" style="width:10%">Code</th>
+              <th class="rc" style="width:8%">Qty/Up</th>
+              <th class="rr" style="width:13%">Unit Price</th>
+              <th class="rr" style="width:10%">Total Qty</th>
+              <th class="rr" style="width:10%">Discount</th>
+              <th class="rr" style="width:15%">Total</th>
             </tr>
           </thead>
-          <tbody>${lineRows}</tbody>
+          <tbody>
+            ${lines.length ? lines.map((l,i)=>{
+              const rowSub  = (l.qty||0)*(l.unitPrice||0);
+              const rowDisc = rowSub*(l.disc||0)/100;
+              const rowNet  = rowSub - rowDisc;
+              const totalQty= rowSub;
+              return `<tr>
+                <td class="td-prod">${l.product}</td>
+                <td class="rc" style="color:#888;font-size:11px">—</td>
+                <td class="rc">${l.qty||0}</td>
+                <td class="rr">PKR ${(l.unitPrice||0).toLocaleString()}</td>
+                <td class="rr">PKR ${totalQty.toLocaleString()}</td>
+                <td class="rr">${l.disc>0?'PKR '+rowDisc.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):'—'}</td>
+                <td class="rr" style="font-weight:700">PKR ${rowNet.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+              </tr>`;
+            }).join('') + Array(Math.max(0,4-lines.length)).fill(`<tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td class="rr">PKR 0.00</td><td class="rr">PKR 0.00</td><td class="rr">—</td><td class="rr">PKR 0.00</td></tr>`).join('')
+            : `<tr>
+                <td class="td-prod">Medical Supplies / Services</td>
+                <td class="rc">—</td><td class="rc">1</td>
+                <td class="rr">PKR ${subtotal.toLocaleString()}</td>
+                <td class="rr">PKR ${subtotal.toLocaleString()}</td>
+                <td class="rr">—</td>
+                <td class="rr" style="font-weight:700">PKR ${subtotal.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+              </tr>
+              <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td class="rr">PKR 0.00</td><td class="rr">PKR 0.00</td><td class="rr">—</td><td class="rr">PKR 0.00</td></tr>
+              <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td class="rr">PKR 0.00</td><td class="rr">PKR 0.00</td><td class="rr">—</td><td class="rr">PKR 0.00</td></tr>
+              <tr class="empty-row"><td>&nbsp;</td><td></td><td></td><td class="rr">PKR 0.00</td><td class="rr">PKR 0.00</td><td class="rr">—</td><td class="rr">PKR 0.00</td></tr>`
+            }
+          </tbody>
         </table>
 
         <!-- ===== TOTALS ===== -->
-        ${totalsHTML}
+        <div class="inv-totals-section">
+          <div class="inv-totals-box">
+            <div class="trow"><span>Sub Total</span><span>PKR ${afterDisc.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>
+            <div class="trow"><span>Sales Tax 5%</span><span>PKR ${salesTaxAmt.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>
+            <div class="trow"><span>Delivery Charge</span><span>PKR ${delivCharge.toFixed(2)}</span></div>
+            <div class="trow"><span>Grand Total</span><span>PKR ${grandTotal.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</span></div>
+          </div>
+        </div>
 
         <!-- ===== FOOTER ===== -->
-        <div class="inv-footer-cols">
-          <div>
-            <div class="inv-footer-label">Notes &amp; Payment Terms</div>
-            <div class="inv-footer-text">${inv.notes || 'Payment is due upon receipt. Thank you for your business.\nFor queries contact us at the details above.'}</div>
-            <div style="margin-top:32px;display:flex;justify-content:flex-start">
-              <div class="inv-sig-box">Authorized Signature</div>
-            </div>
-          </div>
-          <div>
-            <div class="inv-footer-label">Bank / Payment Details</div>
-            <div class="inv-bank-row"><span class="inv-bank-lbl">Bank Name</span><span class="inv-bank-val">Meezan Bank Ltd.</span></div>
-            <div class="inv-bank-row"><span class="inv-bank-lbl">Account Title</span><span class="inv-bank-val">Advic Medicare</span></div>
-            <div class="inv-bank-row"><span class="inv-bank-lbl">Account No.</span><span class="inv-bank-val">XXXX-XXXX-XXXX</span></div>
-            <div class="inv-bank-row"><span class="inv-bank-lbl">IBAN</span><span class="inv-bank-val">PK-XXXXXXXXXXXX</span></div>
-            <div class="inv-bank-row" style="margin-top:8px"><span class="inv-bank-lbl">Cash</span><span class="inv-bank-val">Accepted</span></div>
-          </div>
+        <div class="inv-footer">
+          <div class="inv-pay-label">Payment Method</div>
+          <div class="inv-pay-text">We Accept the PayPal, Master Card, VISA and E-Wallets &nbsp;|&nbsp; Meezan Bank &nbsp;|&nbsp; Cash Accepted</div>
+
+          <div class="inv-terms-label">Terms &amp; Condition:</div>
+          <ul class="inv-terms-list">
+            <li>1. Goods Once Sold Will Not be Taken Back</li>
+            <li>2. Goods Can be Exchanged During 2:00pm to 4:00 pm</li>
+            ${inv.notes ? `<li>3. ${inv.notes}</li>` : ''}
+          </ul>
         </div>
 
         <!-- ===== THANK YOU ===== -->
-        <div class="inv-thankyou">
-          <strong>Thank you for choosing Advic Medicare!</strong>
-          <p>Your health is our priority &nbsp;·&nbsp; advicmedicare.pk</p>
-        </div>
-
-        <div class="inv-page-foot">
-          ${inv.number||''} &nbsp;·&nbsp; Generated on ${fmtDate(today())} &nbsp;·&nbsp; Advic Medicare Management System
-        </div>
+        <div class="inv-thankyou">Thank you for business &amp; visit Again</div>
 
       </div>
     </div>`;
