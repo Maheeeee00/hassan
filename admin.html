@@ -803,39 +803,6 @@ let invoices = load('invoices');
 const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2YX0KrkVpLNTJ4fDM5jLTRC9HWRt_2XDP36sXEfK2h_FZPIYITtHM9By6bIQ_tXWZ/exec';
 let SCRIPT_URL = localStorage.getItem(SK.scriptUrl) || DEFAULT_SCRIPT_URL;
 
-/* ─── SEED DATA ─── */
-function seedData() {
-  if (!products.length) {
-    products = [
-      {id:uid(),name:'Custom T-Shirt',sku:'TSH-001',category:'Apparel',price:29.99,stock:85,icon:'👕',custom:'Color, Size, Print Text',desc:'High-quality cotton tee.'},
-      {id:uid(),name:'Engraved Mug',  sku:'MUG-002',category:'Kitchenware',price:19.99,stock:5, icon:'☕',custom:'Engraving Text, Color',desc:'Ceramic mug with laser engraving.'},
-      {id:uid(),name:'Photo Frame',   sku:'FRM-003',category:'Home Decor',  price:34.50,stock:0, icon:'🖼️',custom:'Size, Material, Photo',desc:'Personalized wooden photo frame.'},
-      {id:uid(),name:'Custom Hoodie', sku:'HOD-004',category:'Apparel',     price:54.99,stock:42,icon:'🧥',custom:'Color, Size, Logo',desc:'Fleece hoodie with embroidered logo.'},
-      {id:uid(),name:'Name Necklace', sku:'JWL-005',category:'Jewelry',     price:49.99,stock:3, icon:'📿',custom:'Name, Metal, Font',desc:'Sterling silver personalized necklace.'},
-    ];
-    saveL('products',products);
-  }
-  if (!orders.length) {
-    const p=products;
-    orders=[
-      {id:'ORD-1001',customer:'Alice Johnson',email:'alice@example.com',productId:p[0].id,product:p[0].name,qty:2,unitPrice:p[0].price,total:+(p[0].price*2).toFixed(2),status:'Delivered', date:'2026-04-01',note:'Red, size M, print "Hello World"',address:'12 Maple St, Springfield, IL'},
-      {id:'ORD-1002',customer:'Bob Martinez',  email:'bob@example.com',  productId:p[1].id,product:p[1].name,qty:1,unitPrice:p[1].price,total:+(p[1].price*1).toFixed(2),status:'Shipped',   date:'2026-04-05',note:'Engrave "Best Dad"',address:'45 Oak Ave, Austin, TX'},
-      {id:'ORD-1003',customer:'Carol White',   email:'carol@example.com',productId:p[3].id,product:p[3].name,qty:1,unitPrice:p[3].price,total:+(p[3].price*1).toFixed(2),status:'Processing',date:'2026-04-08',note:'Navy, size L, company badge',address:'7 Pine Rd, Seattle, WA'},
-      {id:'ORD-1004',customer:'David Lee',     email:'david@example.com',productId:p[4].id,product:p[4].name,qty:2,unitPrice:p[4].price,total:+(p[4].price*2).toFixed(2),status:'Pending',   date:'2026-04-10',note:'Name: Emma, rose gold, cursive',address:'89 Elm St, Boston, MA'},
-      {id:'ORD-1005',customer:'Eva Chen',      email:'eva@example.com',  productId:p[0].id,product:p[0].name,qty:3,unitPrice:p[0].price,total:+(p[0].price*3).toFixed(2),status:'Pending',   date:'2026-04-12',note:'White, size S, team logo',address:'3 Birch Ln, Denver, CO'},
-    ];
-    saveL('orders',orders);
-  }
-  if (!invoices.length) {
-    const o=orders;
-    invoices=[
-      {id:'INV-2001',orderId:o[0].id,customer:o[0].customer,email:o[0].email,amount:o[0].total,tax:10,grand:+(o[0].total*1.1).toFixed(2),dueDate:'2026-04-20',status:'Paid',   notes:'Payment received via card.',createdDate:'2026-04-03'},
-      {id:'INV-2002',orderId:o[1].id,customer:o[1].customer,email:o[1].email,amount:o[1].total,tax:10,grand:+(o[1].total*1.1).toFixed(2),dueDate:'2026-04-25',status:'Unpaid', notes:'Bank transfer within 7 days.',createdDate:'2026-04-07'},
-      {id:'INV-2003',orderId:o[3].id,customer:o[3].customer,email:o[3].email,amount:o[3].total,tax:10,grand:+(o[3].total*1.1).toFixed(2),dueDate:'2026-04-05',status:'Overdue',notes:'Please pay immediately.',createdDate:'2026-04-11'},
-    ];
-    saveL('invoices',invoices);
-  }
-}
 
 /* ─── NAVIGATION ─── */
 const TITLES = {products:'📦 Products', orders:'🛒 Orders', invoices:'🧾 Invoices'};
@@ -1301,7 +1268,6 @@ function toast(msg){
 }
 
 /* ─── INIT ─── */
-seedData();
 initSyncBar();
 renderProducts();
 renderOrders();
