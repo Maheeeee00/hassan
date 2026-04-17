@@ -671,7 +671,8 @@ function uid()      { return Date.now().toString(36)+Math.random().toString(36).
 let products = load('products');
 let orders   = load('orders');
 let invoices = load('invoices');
-let SCRIPT_URL = localStorage.getItem(SK.scriptUrl) || '';
+const DEFAULT_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz2YX0KrkVpLNTJ4fDM5jLTRC9HWRt_2XDP36sXEfK2h_FZPIYITtHM9By6bIQ_tXWZ/exec';
+let SCRIPT_URL = localStorage.getItem(SK.scriptUrl) || DEFAULT_SCRIPT_URL;
 
 /* ─── SEED DATA ─── */
 function seedData() {
@@ -779,10 +780,11 @@ function setSyncStatus(cls, txt) {
 }
 
 function initSyncBar() {
-  if (SCRIPT_URL) {
-    document.getElementById('sync-url-input').value = SCRIPT_URL;
-    setSyncStatus('connected','Script URL configured — click Sync Now to push data.');
+  if (!localStorage.getItem(SK.scriptUrl)) {
+    localStorage.setItem(SK.scriptUrl, DEFAULT_SCRIPT_URL);
   }
+  document.getElementById('sync-url-input').value = SCRIPT_URL;
+  setSyncStatus('connected', '✅ Script URL configured — click Sync Now to push data.');
 }
 
 /* ─── PRODUCTS ─── */
