@@ -26,7 +26,8 @@
       --shadow:    0 4px 24px rgba(0,0,0,.5);
     }
     html { scroll-behavior: smooth; }
-    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--black); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden; }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--black); color: var(--text); display: flex; min-height: 100vh; overflow-x: hidden; max-width: 100vw; }
+    #main { max-width: 100%; overflow-x: hidden; }
 
     /* ══════════════════════════════
        SIDEBAR
@@ -367,29 +368,103 @@
     }
 
     /* ══════════════════════════════
-       RESPONSIVE
+       RESPONSIVE — TABLET
     ══════════════════════════════ */
     @media (max-width: 768px) {
-      #sidebar { transform: translateX(-100%); }
+      /* Sidebar */
+      #sidebar { transform: translateX(-100%); width: 220px; }
       #sidebar.open { transform: translateX(0); }
       #sidebar-overlay.open { display: block; }
-      #main { margin-left: 0; }
+
+      /* Main layout */
+      #main { margin-left: 0; width: 100%; }
+      #page-content { padding: 12px; }
+
+      /* Header */
       #hamburger { display: flex; }
       #dot-menu-btn { display: flex; }
       .header-badge { display: none; }
-      #page-content { padding: 14px; }
-      .form-grid { grid-template-columns: 1fr; }
-      .inv-parties { grid-template-columns: 1fr; }
-      .invoice-card { padding: 20px 16px; }
-      .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
-      .stat-value { font-size: 1.4rem; }
-      table { font-size: .78rem; }
-      th, td { padding: 9px 10px; }
+      header { padding: 0 14px; height: 56px; }
+      .page-title { font-size: .88rem; }
+
+      /* Stats */
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+      .stat-card { padding: 14px 12px; }
+      .stat-value { font-size: 1.35rem; }
+      .stat-label { font-size: .68rem; }
+      .stat-icon { font-size: 1.1rem; margin-bottom: 5px; }
+
+      /* Cards */
+      .card { padding: 14px; margin-bottom: 14px; }
+      .card-header { margin-bottom: 12px; }
+      .card-header h2 { font-size: .88rem; }
+
+      /* Toolbar */
+      .toolbar { gap: 8px; }
+      .toolbar input { min-width: 0; width: 100%; }
+      .toolbar select { width: 100%; }
+
+      /* Table — horizontal scroll only, don't stretch page */
+      .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 8px; }
+      table { font-size: .75rem; min-width: 480px; }
+      th { padding: 8px 8px; font-size: .67rem; }
+      td { padding: 9px 8px; }
+
+      /* Hide less-critical columns on mobile */
+      .hide-mobile { display: none !important; }
+
+      /* Action buttons — icon only on mobile */
+      .btn-sm { padding: 5px 7px; font-size: .72rem; }
+
+      /* Forms */
+      .form-grid { grid-template-columns: 1fr; gap: 10px; }
+      .modal { padding: 20px 16px; }
+      .modal-overlay { padding: 10px; }
+      .form-actions { flex-wrap: wrap; }
+      .form-actions .btn { flex: 1; justify-content: center; }
+
+      /* Invoice */
+      .inv-parties { grid-template-columns: 1fr; gap: 14px; }
+      .invoice-card { padding: 16px 14px; }
+      .inv-brand-name { font-size: 1.05rem; }
+      .inv-header-bar { flex-direction: column; gap: 12px; }
+      .inv-meta { text-align: left; }
+      .inv-summary table { min-width: unset; width: 100%; }
+      .invoice-actions { flex-wrap: wrap; }
+      .invoice-actions .btn { flex: 1; justify-content: center; }
+
+      /* Sync bar */
+      #sync-bar { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px 12px; }
+      #sync-url-input { min-width: 0; width: 100%; }
+      #sync-status-text { font-size: .75rem; }
+
+      /* Toast */
+      #toast { bottom: 14px; right: 14px; left: 14px; text-align: center; }
+
+      /* Dot menu */
+      #dot-menu { right: 8px; min-width: 160px; }
     }
 
+    /* ══════════════════════════════
+       RESPONSIVE — SMALL PHONE
+    ══════════════════════════════ */
     @media (max-width: 420px) {
-      .stats-grid { grid-template-columns: 1fr 1fr; }
-      .stat-card { padding: 14px; }
+      #page-content { padding: 10px; }
+      .stats-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+      .stat-card { padding: 12px 10px; }
+      .stat-value { font-size: 1.2rem; }
+      .stat-label { font-size: .64rem; letter-spacing: 0; }
+      header { height: 52px; padding: 0 10px; }
+      .page-title { font-size: .82rem; }
+      .avatar { width: 30px; height: 30px; font-size: .75rem; }
+      table { min-width: 420px; font-size: .72rem; }
+      th { padding: 7px 6px; }
+      td { padding: 8px 6px; }
+      .card { padding: 12px 10px; border-radius: 8px; }
+      .modal { padding: 16px 12px; border-radius: 10px; }
+      .btn { font-size: .78rem; padding: 7px 12px; }
+      .btn-sm { padding: 4px 7px; font-size: .7rem; }
+      .invoice-card { padding: 12px 10px; }
     }
   </style>
 </head>
@@ -495,8 +570,8 @@
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>#</th><th>Product</th><th>SKU</th><th>Category</th>
-              <th>Price</th><th>Stock</th><th>Status</th><th>Customization</th><th>Actions</th>
+              <th>#</th><th>Product</th><th class="hide-mobile">SKU</th><th class="hide-mobile">Category</th>
+              <th>Price</th><th class="hide-mobile">Stock</th><th>Status</th><th class="hide-mobile">Customization</th><th>Actions</th>
             </tr></thead>
             <tbody id="products-tbody"></tbody>
           </table>
@@ -528,8 +603,8 @@
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>Order ID</th><th>Customer</th><th>Product</th><th>Qty</th>
-              <th>Total</th><th>Status</th><th>Date</th><th>Customization</th><th>Actions</th>
+              <th>Order ID</th><th>Customer</th><th class="hide-mobile">Product</th><th class="hide-mobile">Qty</th>
+              <th>Total</th><th>Status</th><th class="hide-mobile">Date</th><th class="hide-mobile">Customization</th><th>Actions</th>
             </tr></thead>
             <tbody id="orders-tbody"></tbody>
           </table>
@@ -560,8 +635,8 @@
         <div class="table-wrap">
           <table>
             <thead><tr>
-              <th>Invoice #</th><th>Order ID</th><th>Customer</th>
-              <th>Amount</th><th>Due Date</th><th>Status</th><th>Actions</th>
+              <th>Invoice #</th><th class="hide-mobile">Order ID</th><th>Customer</th>
+              <th>Amount</th><th class="hide-mobile">Due Date</th><th>Status</th><th>Actions</th>
             </tr></thead>
             <tbody id="invoices-tbody"></tbody>
           </table>
@@ -810,20 +885,20 @@ function renderProducts() {
       const st=stockStatus(p.stock);
       return`<tr>
         <td style="color:var(--muted)">${i+1}</td>
-        <td><div style="display:flex;align-items:center;gap:10px">
+        <td><div style="display:flex;align-items:center;gap:8px">
           <div class="product-thumb">${p.icon||'📦'}</div>
           <div><div style="font-weight:700;color:var(--text)">${esc(p.name)}</div>
-          <div style="font-size:.75rem;color:var(--muted)">${esc(p.desc||'')}</div></div>
+          <div style="font-size:.72rem;color:var(--muted)">${esc(p.desc||'')}</div></div>
         </div></td>
-        <td><code style="background:var(--black3);padding:2px 7px;border-radius:4px;font-size:.75rem;color:var(--gold-d)">${esc(p.sku)}</code></td>
-        <td>${esc(p.category)}</td>
+        <td class="hide-mobile"><code style="background:var(--black3);padding:2px 7px;border-radius:4px;font-size:.72rem;color:var(--gold-d)">${esc(p.sku)}</code></td>
+        <td class="hide-mobile">${esc(p.category)}</td>
         <td style="color:var(--gold);font-weight:700">$${(+p.price).toFixed(2)}</td>
-        <td>${p.stock}</td>
+        <td class="hide-mobile">${p.stock}</td>
         <td><span class="badge ${st.badge}">${st.label}</span></td>
-        <td style="max-width:130px;font-size:.75rem;color:var(--muted)">${esc(p.custom||'—')}</td>
+        <td class="hide-mobile" style="max-width:130px;font-size:.72rem;color:var(--muted)">${esc(p.custom||'—')}</td>
         <td style="white-space:nowrap">
-          <button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')">✏️</button>
-          <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')" style="margin-left:4px">🗑</button>
+          <button class="btn btn-outline btn-sm" onclick="editProduct('${p.id}')" title="Edit">✏️</button>
+          <button class="btn btn-danger btn-sm" onclick="deleteProduct('${p.id}')" style="margin-left:4px" title="Delete">🗑</button>
         </td>
       </tr>`;
     }).join('');
@@ -892,17 +967,17 @@ function renderOrders(){
   tbody.innerHTML=list.length===0
     ?`<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:30px">No orders found.</td></tr>`
     :list.map(o=>`<tr>
-      <td style="color:var(--gold);font-weight:700">${esc(o.id)}</td>
-      <td><div style="font-weight:600">${esc(o.customer)}</div><div style="font-size:.75rem;color:var(--muted)">${esc(o.email||'')}</div></td>
-      <td>${esc(o.product)}</td>
-      <td>${o.qty}</td>
-      <td style="color:var(--gold);font-weight:700">$${(+o.total).toFixed(2)}</td>
+      <td style="color:var(--gold);font-weight:700;white-space:nowrap">${esc(o.id)}</td>
+      <td><div style="font-weight:600">${esc(o.customer)}</div><div style="font-size:.72rem;color:var(--muted)">${esc(o.email||'')}</div></td>
+      <td class="hide-mobile">${esc(o.product)}</td>
+      <td class="hide-mobile">${o.qty}</td>
+      <td style="color:var(--gold);font-weight:700;white-space:nowrap">$${(+o.total).toFixed(2)}</td>
       <td><span class="badge ${SB[o.status]||'badge-gray'}">${esc(o.status)}</span></td>
-      <td style="white-space:nowrap;color:var(--muted)">${esc(o.date)}</td>
-      <td style="max-width:140px;font-size:.75rem;color:var(--muted)">${esc(o.note||'—')}</td>
+      <td class="hide-mobile" style="white-space:nowrap;color:var(--muted)">${esc(o.date)}</td>
+      <td class="hide-mobile" style="max-width:130px;font-size:.72rem;color:var(--muted)">${esc(o.note||'—')}</td>
       <td style="white-space:nowrap">
-        <button class="btn btn-outline btn-sm" onclick="editOrder('${o.id}')">✏️</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')" style="margin-left:4px">🗑</button>
+        <button class="btn btn-outline btn-sm" onclick="editOrder('${o.id}')" title="Edit">✏️</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')" style="margin-left:4px" title="Delete">🗑</button>
         <button class="btn btn-success btn-sm" onclick="quickInvoice('${o.id}')" style="margin-left:4px" title="Invoice">🧾</button>
       </td>
     </tr>`).join('');
@@ -1047,15 +1122,15 @@ function renderInvoiceList(){
   tbody.innerHTML=list.length===0
     ?`<tr><td colspan="7" style="text-align:center;color:var(--muted);padding:30px">No invoices found.</td></tr>`
     :list.map(inv=>`<tr>
-      <td style="color:var(--gold);font-weight:700">${esc(inv.id)}</td>
-      <td style="color:var(--muted)">${esc(inv.orderId)}</td>
-      <td><div style="font-weight:600">${esc(inv.customer)}</div><div style="font-size:.75rem;color:var(--muted)">${esc(inv.email||'')}</div></td>
-      <td style="color:var(--gold);font-weight:700">$${(+inv.grand).toFixed(2)}</td>
-      <td style="white-space:nowrap;color:var(--muted)">${esc(inv.dueDate)}</td>
+      <td style="color:var(--gold);font-weight:700;white-space:nowrap">${esc(inv.id)}</td>
+      <td class="hide-mobile" style="color:var(--muted)">${esc(inv.orderId)}</td>
+      <td><div style="font-weight:600">${esc(inv.customer)}</div><div style="font-size:.72rem;color:var(--muted)">${esc(inv.email||'')}</div></td>
+      <td style="color:var(--gold);font-weight:700;white-space:nowrap">$${(+inv.grand).toFixed(2)}</td>
+      <td class="hide-mobile" style="white-space:nowrap;color:var(--muted)">${esc(inv.dueDate)}</td>
       <td><span class="badge ${IB[inv.status]||'badge-gray'}">${esc(inv.status)}</span></td>
       <td style="white-space:nowrap">
-        <button class="btn btn-outline btn-sm" onclick="viewInvoice('${inv.id}')">👁 View</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteInvoice('${inv.id}')" style="margin-left:4px">🗑</button>
+        <button class="btn btn-outline btn-sm" onclick="viewInvoice('${inv.id}')" title="View">👁</button>
+        <button class="btn btn-danger btn-sm" onclick="deleteInvoice('${inv.id}')" style="margin-left:4px" title="Delete">🗑</button>
       </td>
     </tr>`).join('');
 }
