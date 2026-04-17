@@ -1222,14 +1222,14 @@ function viewInvoice(id){
     </div>
     <div class="inv-parties">
       <div>
-        <div class="party-label">From</div>
-        <div class="party-name">The Customized</div>
-        <div class="party-info">123 Commerce Blvd<br>Suite 400, Karachi<br>thecustomized.com</div>
-      </div>
-      <div>
         <div class="party-label">Bill To</div>
         <div class="party-name">${esc(inv.customer)}</div>
         <div class="party-info">${esc(inv.email||'')}<br>${esc(o.address||'')}</div>
+      </div>
+      <div>
+        <div class="party-label">Bill From</div>
+        <div class="party-name">The Customized</div>
+        <div class="party-info">123 Commerce Blvd<br>Suite 400, Karachi<br>thecustomized.com</div>
       </div>
     </div>
     <div class="table-wrap">
