@@ -282,7 +282,18 @@
     .inv-meta { text-align: right; }
     .inv-num    { font-size: 1.15rem; font-weight: 800; color: var(--text); }
     .inv-dates  { font-size: .8rem; color: var(--muted); margin-top: 4px; }
-    .inv-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 26px; background: var(--black3); border-radius: 8px; padding: 16px; }
+    .inv-parties {
+      display: flex; flex-direction: row; align-items: stretch;
+      gap: 0; margin-bottom: 26px;
+      background: var(--black3); border-radius: 8px; overflow: hidden;
+      border: 1px solid var(--border);
+    }
+    .inv-parties > div:not(.inv-parties-divider) {
+      flex: 1; padding: 16px 20px;
+    }
+    .inv-parties-divider {
+      width: 1px; background: var(--border); flex-shrink: 0; align-self: stretch;
+    }
     .party-label { font-size: .7rem; color: var(--gold-d); text-transform: uppercase; letter-spacing: .6px; font-weight: 700; margin-bottom: 6px; }
     .party-name  { font-size: .95rem; font-weight: 700; color: var(--text); }
     .party-info  { font-size: .82rem; color: var(--muted); line-height: 1.6; margin-top: 3px; }
@@ -456,8 +467,9 @@
       .form-actions { flex-wrap: wrap; }
       .form-actions .btn { flex: 1; justify-content: center; }
 
-      /* Invoice */
-      .inv-parties { grid-template-columns: 1fr; gap: 10px; padding: 12px; }
+      /* Invoice — keep Bill From / Bill To always side-by-side */
+      .inv-parties { flex-direction: row; }
+      .inv-parties > div:not(.inv-parties-divider) { padding: 12px 10px; }
       .invoice-card { padding: 16px 12px; }
       .inv-brand-name { font-size: 1rem; }
       .inv-brand-sub { font-size: .7rem; }
@@ -505,7 +517,7 @@
       .invoice-card { padding: 12px 10px; }
       .inv-brand-logo { width: 40px; height: 40px; }
       .inv-brand-logo svg { width: 26px; height: 26px; }
-      .inv-parties { padding: 10px; }
+      .inv-parties > div:not(.inv-parties-divider) { padding: 10px 8px; }
       .inv-summary td { padding: 4px 6px; font-size: .78rem; }
     }
   </style>
@@ -1222,14 +1234,15 @@ function viewInvoice(id){
     </div>
     <div class="inv-parties">
       <div>
-        <div class="party-label">Bill To</div>
-        <div class="party-name">${esc(inv.customer)}</div>
-        <div class="party-info">${esc(inv.email||'')}<br>${esc(o.address||'')}</div>
-      </div>
-      <div>
         <div class="party-label">Bill From</div>
         <div class="party-name">The Customized</div>
         <div class="party-info">123 Commerce Blvd<br>Suite 400, Karachi<br>thecustomized.com</div>
+      </div>
+      <div class="inv-parties-divider"></div>
+      <div>
+        <div class="party-label">Bill To</div>
+        <div class="party-name">${esc(inv.customer)}</div>
+        <div class="party-info">${esc(inv.email||'')}<br>${esc(o.address||'')}</div>
       </div>
     </div>
     <div class="table-wrap">
