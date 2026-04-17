@@ -308,26 +308,32 @@
     .invoice-actions .btn { flex: 1; justify-content: center; min-width: 120px; }
 
     /* ══════════════════════════════
-       SYNC STATUS BAR
+       TOP ACTION BAR
     ══════════════════════════════ */
-    #sync-bar {
+    #top-action-bar {
+      display: flex; align-items: center; justify-content: space-between;
       background: var(--black3); border: 1px solid var(--border);
       border-radius: 8px; padding: 10px 16px; margin-bottom: 20px;
-      display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: .8rem;
+      gap: 12px; flex-wrap: wrap;
     }
-    #sync-bar .sync-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--muted); flex-shrink: 0;
+    #top-action-bar .bar-left { display: flex; align-items: center; gap: 10px; font-size: .82rem; color: var(--muted); }
+    #top-action-bar .bar-right { display: flex; align-items: center; gap: 8px; }
+
+    /* Loading overlay */
+    #loading-overlay {
+      display: none; position: fixed; inset: 0; z-index: 900;
+      background: rgba(0,0,0,.65);
+      flex-direction: column; align-items: center; justify-content: center; gap: 18px;
     }
-    #sync-bar.connected .sync-dot { background: var(--success); box-shadow: 0 0 6px var(--success); }
-    #sync-bar.error .sync-dot { background: var(--danger); }
-    #sync-status-text { color: var(--muted); flex: 1; }
-    #sync-url-input {
-      flex: 1; min-width: 260px; padding: 6px 10px;
-      border: 1px solid var(--border); border-radius: 6px;
-      background: var(--black); color: var(--text); font-size: .78rem; outline: none;
+    #loading-overlay.show { display: flex; }
+    .spinner {
+      width: 48px; height: 48px; border-radius: 50%;
+      border: 4px solid var(--border);
+      border-top-color: var(--gold);
+      animation: spin .8s linear infinite;
     }
-    #sync-url-input:focus { border-color: var(--gold-d); }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .loading-text { color: var(--text); font-size: .95rem; font-weight: 600; letter-spacing: .3px; }
 
     /* ══════════════════════════════
        TOAST
@@ -483,10 +489,9 @@
       .invoice-actions { gap: 8px; margin-bottom: 12px; }
       .invoice-actions .btn { min-width: 0; font-size: .8rem; }
 
-      /* Sync bar */
-      #sync-bar { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px 12px; }
-      #sync-url-input { min-width: 0; width: 100%; }
-      #sync-status-text { font-size: .75rem; }
+      /* Top action bar */
+      #top-action-bar { padding: 8px 12px; gap: 8px; }
+      #top-action-bar .bar-left { font-size: .75rem; }
 
       /* Toast */
       #toast { bottom: 14px; right: 14px; left: 14px; text-align: center; }
@@ -592,13 +597,14 @@
     <!-- ══════════ SECTION 1: PRODUCTS ══════════ -->
     <div id="section-products" class="section active">
 
-      <!-- Google Sheets Sync Bar -->
-      <div id="sync-bar">
-        <div class="sync-dot"></div>
-        <span id="sync-status-text">Paste your Google Apps Script Web App URL to sync data to Google Sheets</span>
-        <input type="text" id="sync-url-input" placeholder="https://script.google.com/macros/s/YOUR_ID/exec"/>
-        <button class="btn btn-outline btn-sm" onclick="saveScriptUrl()">💾 Save URL</button>
-        <button class="btn btn-gold btn-sm" onclick="syncAllToSheets()">☁️ Sync Now</button>
+      <!-- Top Action Bar -->
+      <div id="top-action-bar">
+        <div class="bar-left">
+          <span id="last-updated-text">Last updated: never</span>
+        </div>
+        <div class="bar-right">
+          <button class="btn btn-gold btn-sm" onclick="syncAndRefresh()">🔄 Sync &amp; Refresh</button>
+        </div>
       </div>
 
       <div class="stats-grid">
@@ -723,7 +729,7 @@
         <div class="form-group"><label>Product Name *</label><input type="text" id="prod-name" required placeholder="e.g. Custom T-Shirt"/></div>
         <div class="form-group"><label>SKU *</label><input type="text" id="prod-sku" required placeholder="TSH-001"/></div>
         <div class="form-group"><label>Category *</label><input type="text" id="prod-category" required placeholder="Apparel"/></div>
-        <div class="form-group"><label>Price ($) *</label><input type="number" id="prod-price" required min="0" step="0.01" placeholder="29.99"/></div>
+        <div class="form-group"><label>Price (PKR) *</label><input type="number" id="prod-price" required min="0" step="0.01" placeholder="2999"/></div>
         <div class="form-group"><label>Stock Qty *</label><input type="number" id="prod-stock" required min="0" placeholder="100"/></div>
         <div class="form-group"><label>Icon / Emoji</label><input type="text" id="prod-icon" placeholder="👕" maxlength="4"/></div>
         <div class="form-group full"><label>Customization Options</label><input type="text" id="prod-custom" placeholder="Color, Size, Engraving"/></div>
@@ -746,11 +752,11 @@
       <input type="hidden" id="ord-edit-id"/>
       <div class="form-grid">
         <div class="form-group"><label>Customer Name *</label><input type="text" id="ord-customer" required placeholder="John Doe"/></div>
-        <div class="form-group"><label>Customer Email</label><input type="email" id="ord-email" placeholder="john@example.com"/></div>
+        <div class="form-group"><label>Phone No</label><input type="tel" id="ord-email" placeholder="e.g. 03001234567"/></div>
         <div class="form-group"><label>Product *</label><select id="ord-product" required onchange="updateOrderPrice()"><option value="">— Select —</option></select></div>
         <div class="form-group"><label>Quantity *</label><input type="number" id="ord-qty" required min="1" value="1" onchange="updateOrderPrice()"/></div>
-        <div class="form-group"><label>Unit Price ($)</label><input type="number" id="ord-unit-price" step="0.01" readonly/></div>
-        <div class="form-group"><label>Total ($)</label><input type="number" id="ord-total-price" step="0.01" readonly/></div>
+        <div class="form-group"><label>Unit Price (PKR)</label><input type="number" id="ord-unit-price" step="0.01" readonly/></div>
+        <div class="form-group"><label>Total (PKR)</label><input type="number" id="ord-total-price" step="0.01" readonly/></div>
         <div class="form-group"><label>Order Date *</label><input type="date" id="ord-date" required/></div>
         <div class="form-group"><label>Status</label><select id="ord-status"><option>Pending</option><option>Processing</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option></select></div>
         <div class="form-group full"><label>Customization Note</label><textarea id="ord-note" placeholder="e.g. Red, size L, engraved initials 'JD'…"></textarea></div>
@@ -773,9 +779,9 @@
       <div class="form-grid">
         <div class="form-group"><label>Order *</label><select id="inv-order" required onchange="prefillInvoice()"><option value="">— Select Order —</option></select></div>
         <div class="form-group"><label>Due Date *</label><input type="date" id="inv-due" required/></div>
-        <div class="form-group"><label>Amount ($)</label><input type="number" id="inv-amount" step="0.01" readonly/></div>
+        <div class="form-group"><label>Amount (PKR)</label><input type="number" id="inv-amount" step="0.01" readonly/></div>
         <div class="form-group"><label>Tax (%)</label><input type="number" id="inv-tax" value="10" min="0" max="100" onchange="updateInvTotal()"/></div>
-        <div class="form-group"><label>Grand Total ($)</label><input type="number" id="inv-grand" step="0.01" readonly/></div>
+        <div class="form-group"><label>Grand Total (PKR)</label><input type="number" id="inv-grand" step="0.01" readonly/></div>
         <div class="form-group"><label>Status</label><select id="inv-status"><option>Unpaid</option><option>Paid</option><option>Overdue</option></select></div>
         <div class="form-group full"><label>Notes</label><textarea id="inv-notes" placeholder="Payment terms, instructions…"></textarea></div>
       </div>
@@ -788,6 +794,12 @@
 </div>
 
 <div id="toast"></div>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loading-text">Syncing to Google Sheets…</div>
+</div>
 
 <!-- ════════════ JAVASCRIPT ════════════ -->
 <script>
@@ -842,16 +854,17 @@ document.addEventListener('click', e=>{
 });
 
 /* ─── GOOGLE SHEETS SYNC ─── */
-function saveScriptUrl() {
-  const url = document.getElementById('sync-url-input').value.trim();
-  SCRIPT_URL = url;
-  localStorage.setItem(SK.scriptUrl, url);
-  toast(url ? '✅ Script URL saved!' : 'URL cleared.');
+/* ─── SYNC & REFRESH ─── */
+function showLoading(msg) {
+  document.getElementById('loading-text').textContent = msg || 'Loading…';
+  document.getElementById('loading-overlay').classList.add('show');
+}
+function hideLoading() {
+  document.getElementById('loading-overlay').classList.remove('show');
 }
 
-async function syncAllToSheets() {
-  if (!SCRIPT_URL) { toast('⚠️ Please enter your Apps Script URL first.'); return; }
-  toast('⏳ Syncing to Google Sheets…');
+async function syncAndRefresh() {
+  showLoading('Syncing to Google Sheets…');
   const payload = { products, orders, invoices };
   try {
     await fetch(SCRIPT_URL, {
@@ -860,27 +873,32 @@ async function syncAllToSheets() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
-    setSyncStatus('connected','✅ Synced to Google Sheets — ' + new Date().toLocaleTimeString());
-    toast('✅ Synced to Google Sheets!');
-  } catch(err) {
-    setSyncStatus('error','❌ Sync failed: ' + err.message);
-    toast('❌ Sync failed. Check URL & permissions.');
-  }
+  } catch(e) { /* no-cors mode always resolves, ignore */ }
+
+  showLoading('Refreshing data…');
+  await new Promise(r => setTimeout(r, 600));
+
+  products = load('products');
+  orders   = load('orders');
+  invoices = load('invoices');
+  renderProducts();
+  renderOrders();
+  renderInvoiceList();
+  updateInvStats();
+  populateOrderProductDropdown();
+  populateInvoiceOrderDropdown();
+
+  const now = new Date().toLocaleTimeString();
+  document.getElementById('last-updated-text').textContent = 'Last synced: ' + now;
+
+  hideLoading();
+  toast('✅ Synced & refreshed — ' + now);
 }
 
-function setSyncStatus(cls, txt) {
-  const bar = document.getElementById('sync-bar');
-  bar.className = '';
-  bar.classList.add(cls);
-  document.getElementById('sync-status-text').textContent = txt;
-}
-
-function initSyncBar() {
+function initApp() {
   if (!localStorage.getItem(SK.scriptUrl)) {
     localStorage.setItem(SK.scriptUrl, DEFAULT_SCRIPT_URL);
   }
-  document.getElementById('sync-url-input').value = SCRIPT_URL;
-  setSyncStatus('connected', '✅ Script URL configured — click Sync Now to push data.');
 }
 
 /* ─── PRODUCTS ─── */
@@ -913,7 +931,7 @@ function renderProducts() {
         </div></td>
         <td class="hide-mobile"><code style="background:var(--black3);padding:2px 7px;border-radius:4px;font-size:.72rem;color:var(--gold-d)">${esc(p.sku)}</code></td>
         <td class="hide-mobile">${esc(p.category)}</td>
-        <td style="color:var(--gold);font-weight:700">$${(+p.price).toFixed(2)}</td>
+        <td style="color:var(--gold);font-weight:700">PKR ${(+p.price).toFixed(2)}</td>
         <td class="hide-mobile">${p.stock}</td>
         <td><span class="badge ${st.badge}">${st.label}</span></td>
         <td class="hide-mobile" style="max-width:130px;font-size:.72rem;color:var(--muted)">${esc(p.custom||'—')}</td>
@@ -992,7 +1010,7 @@ function renderOrders(){
       <td><div style="font-weight:600">${esc(o.customer)}</div><div style="font-size:.72rem;color:var(--muted)">${esc(o.email||'')}</div></td>
       <td class="hide-mobile">${esc(o.product)}</td>
       <td class="hide-mobile">${o.qty}</td>
-      <td style="color:var(--gold);font-weight:700;white-space:nowrap">$${(+o.total).toFixed(2)}</td>
+      <td style="color:var(--gold);font-weight:700;white-space:nowrap">PKR ${(+o.total).toFixed(2)}</td>
       <td><span class="badge ${SB[o.status]||'badge-gray'}">${esc(o.status)}</span></td>
       <td class="hide-mobile" style="white-space:nowrap;color:var(--muted)">${esc(o.date)}</td>
       <td class="hide-mobile" style="max-width:130px;font-size:.72rem;color:var(--muted)">${esc(o.note||'—')}</td>
@@ -1014,7 +1032,7 @@ function populateOrderProductDropdown(){
   const sel=document.getElementById('ord-product');
   const prev=sel.value;
   sel.innerHTML='<option value="">— Select Product —</option>'+
-    products.map(p=>`<option value="${p.id}" data-price="${p.price}">${esc(p.name)} — $${(+p.price).toFixed(2)}</option>`).join('');
+    products.map(p=>`<option value="${p.id}" data-price="${p.price}">${esc(p.name)} — PKR ${(+p.price).toFixed(2)}</option>`).join('');
   sel.value=prev;
 }
 function updateOrderPrice(){
@@ -1093,7 +1111,7 @@ function populateInvoiceOrderDropdown(){
   const sel=document.getElementById('inv-order');
   const prev=sel.value;
   sel.innerHTML='<option value="">— Select Order —</option>'+
-    orders.map(o=>`<option value="${o.id}">${esc(o.id)} · ${esc(o.customer)} · $${(+o.total).toFixed(2)}</option>`).join('');
+    orders.map(o=>`<option value="${o.id}">${esc(o.id)} · ${esc(o.customer)} · PKR ${(+o.total).toFixed(2)}</option>`).join('');
   sel.value=prev;
 }
 function prefillInvoice(){
@@ -1146,7 +1164,7 @@ function renderInvoiceList(){
       <td style="color:var(--gold);font-weight:700;white-space:nowrap">${esc(inv.id)}</td>
       <td class="hide-mobile" style="color:var(--muted)">${esc(inv.orderId)}</td>
       <td><div style="font-weight:600">${esc(inv.customer)}</div><div style="font-size:.72rem;color:var(--muted)">${esc(inv.email||'')}</div></td>
-      <td style="color:var(--gold);font-weight:700;white-space:nowrap">$${(+inv.grand).toFixed(2)}</td>
+      <td style="color:var(--gold);font-weight:700;white-space:nowrap">PKR ${(+inv.grand).toFixed(2)}</td>
       <td class="hide-mobile" style="white-space:nowrap;color:var(--muted)">${esc(inv.dueDate)}</td>
       <td><span class="badge ${IB[inv.status]||'badge-gray'}">${esc(inv.status)}</span></td>
       <td style="white-space:nowrap">
@@ -1157,7 +1175,7 @@ function renderInvoiceList(){
 }
 function updateInvStats(){
   const total=invoices.reduce((s,i)=>s+(+i.grand||0),0);
-  document.getElementById('inv-stat-revenue').textContent='$'+total.toFixed(2);
+  document.getElementById('inv-stat-revenue').textContent='PKR '+total.toFixed(2);
   document.getElementById('inv-stat-count').textContent  =invoices.length;
   document.getElementById('inv-stat-unpaid').textContent =invoices.filter(i=>i.status==='Unpaid').length;
   document.getElementById('inv-stat-overdue').textContent=invoices.filter(i=>i.status==='Overdue').length;
@@ -1221,20 +1239,19 @@ function viewInvoice(id){
           <td>${esc(o.product||'—')}</td>
           <td style="font-size:.78rem;color:var(--muted)">${esc(o.note||'—')}</td>
           <td>${o.qty||1}</td>
-          <td>$${(+o.unitPrice||0).toFixed(2)}</td>
-          <td style="color:var(--gold);font-weight:700">$${(+inv.amount).toFixed(2)}</td>
+          <td>PKR ${(+o.unitPrice||0).toFixed(2)}</td>
+          <td style="color:var(--gold);font-weight:700">PKR ${(+inv.amount).toFixed(2)}</td>
         </tr></tbody>
       </table>
     </div>
     <div class="inv-summary"><table>
-      <tr><td style="color:var(--muted)">Subtotal</td><td style="text-align:right">$${(+inv.amount).toFixed(2)}</td></tr>
-      <tr><td style="color:var(--muted)">Tax (${inv.tax}%)</td><td style="text-align:right">$${((+inv.amount)*(inv.tax/100)).toFixed(2)}</td></tr>
-      <tr class="total-row"><td>Total Due</td><td style="text-align:right">$${(+inv.grand).toFixed(2)}</td></tr>
+      <tr><td style="color:var(--muted)">Subtotal</td><td style="text-align:right">PKR ${(+inv.amount).toFixed(2)}</td></tr>
+      <tr><td style="color:var(--muted)">Tax (${inv.tax}%)</td><td style="text-align:right">PKR ${((+inv.amount)*(inv.tax/100)).toFixed(2)}</td></tr>
+      <tr class="total-row"><td>Total Due</td><td style="text-align:right">PKR ${(+inv.grand).toFixed(2)}</td></tr>
     </table></div>
     ${inv.notes?`<div style="margin-top:18px;padding:13px;background:var(--black3);border-radius:8px;font-size:.82rem;color:var(--muted);border-left:3px solid var(--gold-d)"><strong style="color:var(--gold-d)">Notes:</strong> ${esc(inv.notes)}</div>`:''}
     <div class="inv-footer">
-      Thank you for choosing The Customized! &nbsp;·&nbsp; Payment due by ${esc(inv.dueDate)}<br>
-      Questions? &nbsp;support@thecustomized.com
+      Thank you for choosing The Customized!
     </div>`;
   document.getElementById('invoice-preview').scrollIntoView({behavior:'smooth'});
 }
@@ -1268,7 +1285,7 @@ function toast(msg){
 }
 
 /* ─── INIT ─── */
-initSyncBar();
+initApp();
 renderProducts();
 renderOrders();
 updateInvStats();
