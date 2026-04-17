@@ -261,10 +261,12 @@
     /* ══════════════════════════════
        INVOICE VIEW
     ══════════════════════════════ */
+    #invoice-preview { margin-top: 4px; }
     .invoice-card {
       background: var(--card); border: 1px solid var(--border);
       border-radius: var(--radius); box-shadow: var(--shadow);
       padding: 36px 40px; max-width: 820px; margin: 0 auto;
+      width: 100%;
     }
     .inv-header-bar { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 16px; margin-bottom: 28px; }
     .inv-brand { display: flex; align-items: center; gap: 14px; }
@@ -272,14 +274,15 @@
       width: 56px; height: 56px; border-radius: 10px;
       background: var(--black); border: 1.5px solid var(--gold-d);
       display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
     }
     .inv-brand-logo svg { width: 36px; height: 36px; }
     .inv-brand-name { font-size: 1.3rem; font-weight: 900; color: var(--gold); }
-    .inv-brand-sub  { font-size: .75rem; color: var(--muted); margin-top: 3px; }
+    .inv-brand-sub  { font-size: .75rem; color: var(--muted); margin-top: 3px; line-height: 1.5; }
     .inv-meta { text-align: right; }
     .inv-num    { font-size: 1.15rem; font-weight: 800; color: var(--text); }
     .inv-dates  { font-size: .8rem; color: var(--muted); margin-top: 4px; }
-    .inv-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 26px; }
+    .inv-parties { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; margin-bottom: 26px; background: var(--black3); border-radius: 8px; padding: 16px; }
     .party-label { font-size: .7rem; color: var(--gold-d); text-transform: uppercase; letter-spacing: .6px; font-weight: 700; margin-bottom: 6px; }
     .party-name  { font-size: .95rem; font-weight: 700; color: var(--text); }
     .party-info  { font-size: .82rem; color: var(--muted); line-height: 1.6; margin-top: 3px; }
@@ -290,7 +293,8 @@
     .inv-summary td { border: none; padding: 5px 10px; font-size: .85rem; }
     .inv-summary .total-row td { font-weight: 800; font-size: 1rem; color: var(--gold); border-top: 1px solid var(--border); padding-top: 10px; }
     .inv-footer { margin-top: 32px; padding-top: 18px; border-top: 1px solid var(--border); font-size: .75rem; color: var(--muted); text-align: center; line-height: 1.7; }
-    .invoice-actions { display: flex; gap: 10px; justify-content: flex-end; margin-bottom: 18px; }
+    .invoice-actions { display: flex; gap: 10px; justify-content: space-between; margin-bottom: 14px; flex-wrap: wrap; }
+    .invoice-actions .btn { flex: 1; justify-content: center; min-width: 120px; }
 
     /* ══════════════════════════════
        SYNC STATUS BAR
@@ -358,13 +362,42 @@
     #dot-menu a .nav-icon { font-size: 1rem; }
 
     /* ══════════════════════════════
-       PRINT
+       PRINT — show ONLY the invoice
     ══════════════════════════════ */
     @media print {
-      #sidebar, header, .invoice-actions, .stats-grid, .toolbar, .btn, #sync-bar, #toast { display: none !important; }
-      #main { margin-left: 0 !important; }
-      .invoice-card { box-shadow: none !important; border: none !important; }
-      body { background: #fff !important; color: #000 !important; }
+      /* Hide absolutely everything */
+      body * { visibility: hidden !important; }
+
+      /* Then show only the print area and all its children */
+      #invoice-print-area,
+      #invoice-print-area * { visibility: visible !important; }
+
+      /* Position it to fill the whole page */
+      #invoice-print-area {
+        position: fixed !important;
+        top: 0 !important; left: 0 !important;
+        width: 100% !important;
+        margin: 0 !important; padding: 28px 32px !important;
+        background: #fff !important;
+        color: #000 !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+      }
+
+      /* Force print-friendly text colours */
+      #invoice-print-area .inv-brand-name { color: #000 !important; }
+      #invoice-print-area th { background: #f5f5f5 !important; color: #000 !important; }
+      #invoice-print-area td { color: #000 !important; }
+      #invoice-print-area .party-label,
+      #invoice-print-area .party-info,
+      #invoice-print-area .inv-dates,
+      #invoice-print-area .inv-brand-sub,
+      #invoice-print-area .inv-footer { color: #555 !important; }
+      #invoice-print-area .badge { border: 1px solid #aaa !important; color: #000 !important; background: #f5f5f5 !important; }
+      #invoice-print-area .total-row td { color: #000 !important; font-weight: 800 !important; }
+
+      @page { margin: 0; size: A4; }
     }
 
     /* ══════════════════════════════
@@ -424,14 +457,19 @@
       .form-actions .btn { flex: 1; justify-content: center; }
 
       /* Invoice */
-      .inv-parties { grid-template-columns: 1fr; gap: 14px; }
-      .invoice-card { padding: 16px 14px; }
-      .inv-brand-name { font-size: 1.05rem; }
-      .inv-header-bar { flex-direction: column; gap: 12px; }
+      .inv-parties { grid-template-columns: 1fr; gap: 10px; padding: 12px; }
+      .invoice-card { padding: 16px 12px; }
+      .inv-brand-name { font-size: 1rem; }
+      .inv-brand-sub { font-size: .7rem; }
+      .inv-header-bar { flex-direction: column; gap: 10px; margin-bottom: 16px; }
       .inv-meta { text-align: left; }
+      .inv-num { font-size: 1rem; }
+      .inv-dates { font-size: .72rem; }
+      .inv-summary { justify-content: stretch; }
       .inv-summary table { min-width: unset; width: 100%; }
-      .invoice-actions { flex-wrap: wrap; }
-      .invoice-actions .btn { flex: 1; justify-content: center; }
+      .inv-footer { font-size: .7rem; margin-top: 20px; }
+      .invoice-actions { gap: 8px; margin-bottom: 12px; }
+      .invoice-actions .btn { min-width: 0; font-size: .8rem; }
 
       /* Sync bar */
       #sync-bar { flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px 12px; }
@@ -465,6 +503,10 @@
       .btn { font-size: .78rem; padding: 7px 12px; }
       .btn-sm { padding: 4px 7px; font-size: .7rem; }
       .invoice-card { padding: 12px 10px; }
+      .inv-brand-logo { width: 40px; height: 40px; }
+      .inv-brand-logo svg { width: 26px; height: 26px; }
+      .inv-parties { padding: 10px; }
+      .inv-summary td { padding: 4px 6px; font-size: .78rem; }
     }
   </style>
 </head>
@@ -646,8 +688,8 @@
       <!-- Invoice Print Preview -->
       <div id="invoice-preview" style="display:none">
         <div class="invoice-actions">
-          <button class="btn btn-outline" onclick="document.getElementById('invoice-preview').style.display='none'">← Back</button>
-          <button class="btn btn-gold" onclick="window.print()">🖨️ Print / PDF</button>
+          <button class="btn btn-outline" onclick="closeInvoicePreview()">← Back to List</button>
+          <button class="btn btn-gold" onclick="printInvoice()">🖨️ Print / Save PDF</button>
         </div>
         <div class="invoice-card" id="invoice-print-area"></div>
       </div>
@@ -1215,6 +1257,15 @@ function viewInvoice(id){
       Questions? &nbsp;support@thecustomized.com
     </div>`;
   document.getElementById('invoice-preview').scrollIntoView({behavior:'smooth'});
+}
+
+/* ─── INVOICE PRINT HELPERS ─── */
+function printInvoice() {
+  window.print();
+}
+function closeInvoicePreview() {
+  document.getElementById('invoice-preview').style.display = 'none';
+  document.getElementById('invoices-tbody').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 /* ─── MODAL HELPERS ─── */
