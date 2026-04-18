@@ -1,0 +1,268 @@
+.hidden {
+  display: none !important;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: linear-gradient(120deg, #0f172a, #1e293b);
+  color: #e2e8f0;
+  min-height: 100vh;
+}
+
+.app {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: minmax(320px, 380px) 1fr;
+}
+
+.card {
+  background: rgba(15, 23, 42, 0.8);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 16px;
+  padding: 1rem;
+  backdrop-filter: blur(4px);
+}
+
+.controls h1 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+}
+
+.hint {
+  color: #cbd5e1;
+  margin-top: 0;
+}
+
+.hint.small {
+  font-size: 0.9rem;
+}
+
+textarea,
+select,
+input[type="range"] {
+  width: 100%;
+}
+
+textarea,
+select {
+  background: #0b1222;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  border-radius: 10px;
+  padding: 0.65rem;
+  margin-top: 0.35rem;
+}
+
+label {
+  display: block;
+  font-size: 0.95rem;
+  color: #cbd5e1;
+}
+
+.grid {
+  margin-top: 0.85rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+button {
+  border: 0;
+  border-radius: 10px;
+  padding: 0.6rem 0.8rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.primary {
+  background: #2563eb;
+  color: white;
+}
+
+.secondary {
+  background: #0ea5e9;
+  color: white;
+}
+
+.danger {
+  background: #dc2626;
+  color: white;
+}
+
+.status {
+  margin-top: 0.8rem;
+  margin-bottom: 0.35rem;
+  font-weight: 600;
+}
+
+.download {
+  color: #bfdbfe;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.download:hover {
+  text-decoration: underline;
+}
+
+.studio {
+  display: flex;
+}
+
+.stage {
+  position: relative;
+  width: 100%;
+  min-height: 500px;
+  border-radius: 14px;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 10%, #1d4ed8 0%, transparent 35%),
+    radial-gradient(circle at 70% 85%, #0891b2 0%, transparent 45%),
+    #0b1023;
+  border: 1px solid #334155;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem;
+}
+
+.live-tag {
+  align-self: flex-start;
+  background: #dc2626;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  padding: 0.3rem 0.55rem;
+}
+
+.anchor-wrap {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.anchor-avatar {
+  width: 122px;
+  height: 122px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #f8fafc, #d1d5db);
+  display: grid;
+  place-items: center;
+  box-shadow: 0 0 0 5px rgba(248, 250, 252, 0.2);
+}
+
+.face {
+  width: 70px;
+}
+
+.eyes {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.eyes::before,
+.eyes::after {
+  content: "";
+  width: 12px;
+  height: 12px;
+  background: #0f172a;
+  border-radius: 50%;
+}
+
+.mouth {
+  margin: 0 auto;
+  width: 28px;
+  height: 8px;
+  border-radius: 999px;
+  background: #0f172a;
+  transition: all 90ms linear;
+}
+
+.mouth.talking {
+  height: 22px;
+  width: 22px;
+  border-radius: 45%;
+}
+
+.anchor-meta h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.anchor-meta p {
+  margin: 0.4rem 0 0;
+}
+
+.ticker {
+  border-radius: 10px;
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  padding: 0.6rem 0.8rem;
+  min-height: 68px;
+  display: flex;
+  align-items: center;
+  line-height: 1.35;
+}
+
+.wave {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 0.25rem;
+  height: 42px;
+}
+
+.wave span {
+  width: 7px;
+  border-radius: 999px;
+  background: #38bdf8;
+  height: 12px;
+  transform-origin: bottom;
+  transition: transform 90ms linear, height 90ms linear;
+}
+
+.wave.active span:nth-child(1) {
+  height: 30px;
+}
+.wave.active span:nth-child(2) {
+  height: 18px;
+}
+.wave.active span:nth-child(3) {
+  height: 35px;
+}
+.wave.active span:nth-child(4) {
+  height: 22px;
+}
+.wave.active span:nth-child(5) {
+  height: 28px;
+}
+
+@media (max-width: 960px) {
+  .app {
+    grid-template-columns: 1fr;
+  }
+
+  .stage {
+    min-height: 440px;
+  }
+}
