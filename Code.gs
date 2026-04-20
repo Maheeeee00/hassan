@@ -1,5 +1,6 @@
 const SHEET_ID = "14UKMRb732DCPK0749NSLKZmGqvalS2a_Xo8IDlnJhAM";
 const CURRICULUM_SHEET_LINK = "";
+const MAIN_WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz5I5ngVb1wqEn3CcOQU1M0ABrTAHoP9GVk4WSGmrt-9XPbXaWIUtXLPtxkqZNWNX7eMw/exec";
 // Example:
 // const CURRICULUM_SHEET_LINK = "https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit#gid=0";
 
