@@ -1,5 +1,8 @@
 var SHEET_NAME = "CurriculumData";
 var REQUIRED_COLUMNS = ["calander", "sallybus", "password"];
+var CURRICULUM_SHEET_LINK = "";
+// Example:
+// var CURRICULUM_SHEET_LINK = "https://docs.google.com/spreadsheets/d/SPREADSHEET_ID/edit#gid=0";
 
 function doGet() {
   return HtmlService.createHtmlOutputFromFile("curriculum")
@@ -89,7 +92,13 @@ function getOrCreateSheet_() {
 }
 
 function getSpreadsheet_() {
-  var spreadsheetId = PropertiesService.getScriptProperties().getProperty("CURRICULUM_SHEET_ID");
+  var scriptProperties = PropertiesService.getScriptProperties();
+  var spreadsheetId = scriptProperties.getProperty("CURRICULUM_SHEET_ID");
+
+  if (!spreadsheetId && CURRICULUM_SHEET_LINK) {
+    spreadsheetId = extractSpreadsheetId_(CURRICULUM_SHEET_LINK);
+  }
+
   if (spreadsheetId) {
     return SpreadsheetApp.openById(spreadsheetId);
   }
@@ -100,8 +109,27 @@ function getSpreadsheet_() {
   }
 
   throw new Error(
-    "Spreadsheet not found. Bind this script to a sheet, or set script property CURRICULUM_SHEET_ID."
+    "Spreadsheet not found. Bind this script to a sheet, set script property CURRICULUM_SHEET_ID, or set CURRICULUM_SHEET_LINK."
   );
+}
+
+function setCurriculumSheetLink(sheetLink) {
+  if (!sheetLink) {
+    throw new Error("Sheet link or ID is required.");
+  }
+
+  var spreadsheetId = extractSpreadsheetId_(sheetLink);
+  PropertiesService.getScriptProperties().setProperty("CURRICULUM_SHEET_ID", spreadsheetId);
+
+  return {
+    message: "Sheet link saved successfully.",
+    spreadsheetId: spreadsheetId
+  };
+}
+
+function clearCurriculumSheetLink() {
+  PropertiesService.getScriptProperties().deleteProperty("CURRICULUM_SHEET_ID");
+  return { message: "Saved sheet link cleared." };
 }
 
 function ensureColumns_(sheet) {
@@ -138,6 +166,26 @@ function ensureColumns_(sheet) {
 
 function normalizeHeader_(value) {
   return String(value || "").trim().toLowerCase();
+}
+
+function extractSpreadsheetId_(sheetLinkOrId) {
+  var value = String(sheetLinkOrId || "").trim();
+  if (!value) {
+    throw new Error("Sheet link or ID cannot be empty.");
+  }
+
+  // Accept direct spreadsheet ID.
+  if (/^[a-zA-Z0-9-_]{25,}$/.test(value) && value.indexOf("/") === -1) {
+    return value;
+  }
+
+  // Accept full Google Sheets URL.
+  var match = value.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+  if (match && match[1]) {
+    return match[1];
+  }
+
+  throw new Error("Invalid Google Sheet link or ID.");
 }
 
 function ensureDataRow_(sheet) {
