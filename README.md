@@ -31,7 +31,7 @@ Data is saved to:
 ### Option 1: CMake (recommended)
 
 ```bash
-cmake -S . -B build
+cmake -S . -B build -DCMAKE_CXX_COMPILER=g++
 cmake --build build
 ./build/medical_data_manager
 ```

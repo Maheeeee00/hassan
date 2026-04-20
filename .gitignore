@@ -1,0 +1,5 @@
+build/
+medical_data_manager
+patient_records.db
+patient_records.db.bak
+patient_records.db.tmp
