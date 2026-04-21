@@ -48,6 +48,33 @@ body{
   padding:8px 12px;
 }
 .syl-books-info strong{color:var(--orange)}
+.books-tabs{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:-0.5rem 0 1rem 0;
+}
+.book-tab{
+  border:1px solid var(--border);
+  background:var(--navy2);
+  color:var(--text-sec);
+  border-radius:999px;
+  padding:7px 12px;
+  font-size:12px;
+  font-weight:700;
+  font-family:var(--font);
+  cursor:pointer;
+  transition:all 0.15s;
+}
+.book-tab:hover{
+  border-color:var(--border-orange);
+  color:var(--orange);
+}
+.book-tab.active{
+  border-color:var(--border-orange);
+  background:var(--orange-light);
+  color:var(--orange);
+}
 .syl-actions{display:flex;justify-content:flex-end;margin-bottom:1rem}
 .btn-print{
   border:1px solid var(--border-orange);
@@ -208,6 +235,7 @@ body{
       </div>
       <div class="sec-title"><div class="sec-title-bar"></div><span id="detail-title">Syllabus</span></div>
       <div id="syl-books-info" class="syl-books-info"></div>
+      <div id="books-tabs" class="books-tabs"></div>
       <div class="syl-actions">
         <button class="btn-print" onclick="printCurrentSyllabus()">🖨 Print Syllabus</button>
       </div>
@@ -307,6 +335,7 @@ const TIMETABLE_DATA = {};
 let currentSection = 'syllabus';
 let curClass = '';
 let curTerm = 0;
+let curBook = '';
 
 function showSection(id, btn) {
   document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -337,25 +366,59 @@ function showSyllabus(term) {
 
   const tbody = document.getElementById('syl-tbody');
   const booksInfo = document.getElementById('syl-books-info');
+  const booksTabs = document.getElementById('books-tabs');
   tbody.innerHTML = '';
   const rows = ((SYLLABUS_DATA[curClass] || {})[term]) || [];
-  const books = [...new Set(rows.map(r => String(r.subject || '').trim()).filter(Boolean))];
+  const books = uniqueBooksForSelection(rows);
+
+  if (!curBook || !books.includes(curBook)) {
+    curBook = books[0] || '';
+  }
+
+  renderBookTabs(books);
+  const filteredRows = curBook
+    ? rows.filter(r => String(r.subject || '').trim() === curBook)
+    : rows;
+
   booksInfo.innerHTML = books.length
-    ? `<strong>Books:</strong> ${books.map(escapeHtml).join(', ')}`
+    ? `<strong>Book:</strong> ${escapeHtml(curBook || books[0])}`
     : '<strong>Books:</strong> No books found for this class and term.';
 
-  if (!rows.length) {
+  if (!filteredRows.length) {
     const tr = document.createElement('tr');
-    tr.innerHTML = '<td class="ch-num">-</td><td class="ch-title">No chapters added yet</td><td class="ch-desc">Use the + button to save data in Google Sheet, then load your own data here.</td><td><span class="badge b-blue">⏳ Pending</span></td>';
+    tr.innerHTML = '<td class="ch-num">-</td><td class="ch-title">No chapters for selected book</td><td class="ch-desc">Choose another book tab or add data in this class and term.</td><td><span class="badge b-blue">⏳ Pending</span></td>';
     tbody.appendChild(tr);
     return;
   }
 
-  rows.forEach((r, index) => {
+  filteredRows.forEach((r, index) => {
     const status = (r.status || '').toLowerCase() === 'completed';
     const tr = document.createElement('tr');
     tr.innerHTML = `<td class="ch-num">${index + 1}</td><td class="ch-title">${r.title || ''}</td><td class="ch-desc">${r.description || ''}</td><td><span class="badge ${status ? 'b-green' : 'b-blue'}">${status ? '✔ Completed' : '⏳ Upcoming'}</span></td>`;
     tbody.appendChild(tr);
+  });
+}
+
+function uniqueBooksForSelection(rows) {
+  return [...new Set((rows || []).map(r => String(r.subject || '').trim()).filter(Boolean))];
+}
+
+function renderBookTabs(books) {
+  const booksTabs = document.getElementById('books-tabs');
+  booksTabs.innerHTML = '';
+  if (!books.length) {
+    return;
+  }
+  books.forEach(book => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = `book-tab${book === curBook ? ' active' : ''}`;
+    btn.textContent = book;
+    btn.onclick = () => {
+      curBook = book;
+      showSyllabus(curTerm);
+    };
+    booksTabs.appendChild(btn);
   });
 }
 
@@ -370,17 +433,20 @@ function escapeHtml(text) {
 
 function printCurrentSyllabus() {
   const rows = ((SYLLABUS_DATA[curClass] || {})[curTerm]) || [];
+  const filteredRows = curBook
+    ? rows.filter(r => String(r.subject || '').trim() === curBook)
+    : rows;
   if (!curClass || !curTerm) {
     alert('Please select class and term first.');
     return;
   }
-  if (!rows.length) {
+  if (!filteredRows.length) {
     alert('No syllabus rows found for this class and term.');
     return;
   }
 
   const termLabel = ['', '1st Term', '2nd Term', '3rd Term'][curTerm] || `${curTerm} Term`;
-  const htmlRows = rows.map((r, index) => {
+  const htmlRows = filteredRows.map((r, index) => {
     const status = (r.status || '').toLowerCase() === 'completed' ? 'Completed' : 'Upcoming';
     return `<tr>
       <td>${index + 1}</td>
@@ -413,7 +479,7 @@ function printCurrentSyllabus() {
 </head>
 <body>
   <div class="title">Startwell Education - Syllabus</div>
-  <div class="sub"><strong>Class:</strong> ${escapeHtml(curClass)} &nbsp; | &nbsp; <strong>Term:</strong> ${escapeHtml(termLabel)}</div>
+  <div class="sub"><strong>Class:</strong> ${escapeHtml(curClass)} &nbsp; | &nbsp; <strong>Term:</strong> ${escapeHtml(termLabel)} &nbsp; | &nbsp; <strong>Book:</strong> ${escapeHtml(curBook || 'All')}</div>
   <table>
     <thead>
       <tr>
@@ -436,6 +502,7 @@ function printCurrentSyllabus() {
 function backToClasses() {
   curClass = '';
   curTerm = 0;
+  curBook = '';
   document.getElementById('syl-view-terms').style.display = 'none';
   document.getElementById('syl-view-detail').style.display = 'none';
   document.getElementById('syl-view-classes').style.display = 'block';
