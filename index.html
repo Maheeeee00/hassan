@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Startwell Education — Curriculum Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#0a1628;--navy2:#0f1f3d;--navy3:#162647;--navy4:#1d3058;--orange:#f97316;--orange2:#fb923c;
+  --orange-light:rgba(249,115,22,0.15);--green:#22c55e;--green2:#16a34a;--green-light:rgba(34,197,94,0.12);
+  --border:rgba(255,255,255,0.08);--border-orange:rgba(249,115,22,0.35);--border-green:rgba(34,197,94,0.3);
+  --text:#f0f4ff;--text-sec:#9db3d8;--text-muted:#5a7099;--red:#f87171;--red-bg:rgba(248,113,113,0.12);
+  --gold:#fbbf24;--gold-bg:rgba(251,191,36,0.1);--blue-accent:#38bdf8;--purple:#a78bfa;
+  --r-sm:6px;--r-md:10px;--r-lg:14px;--r-xl:20px;--font:'Sora',sans-serif;--font-body:'DM Sans',sans-serif;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--font-body);background:var(--navy);color:var(--text);min-height:100vh;
+  background-image:radial-gradient(ellipse 80% 50% at 50% -20%,rgba(249,115,22,0.07),transparent),radial-gradient(ellipse 60% 40% at 80% 80%,rgba(34,197,94,0.05),transparent)
+}
+.header{background:linear-gradient(135deg,#060e1f 0%,#0a1628 60%,#0c1e10 100%);border-bottom:1px solid var(--border-orange);position:sticky;top:0;z-index:50;backdrop-filter:blur(12px)}
+.header-inner{max-width:1000px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:14px 1.5rem}
+.header-left{display:flex;align-items:center;gap:14px}
+.logo-box{width:50px;height:50px;border-radius:var(--r-md);background:linear-gradient(135deg,var(--orange),#ea6d00);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0;box-shadow:0 0 20px rgba(249,115,22,0.4)}
+.brand{font-family:var(--font);font-size:19px;font-weight:800;color:var(--text);letter-spacing:0.5px}
+.brand span{color:var(--orange)}
+.brand-sub{font-size:10px;color:var(--text-muted);letter-spacing:2.5px;text-transform:uppercase;margin-top:2px;font-family:var(--font-body)}
+.header-badge{padding:5px 14px;border-radius:20px;background:var(--green-light);border:1px solid var(--border-green);font-size:11px;font-weight:600;color:var(--green);font-family:var(--font);letter-spacing:0.5px}
+.container{max-width:1000px;margin:0 auto;padding:2rem 1.5rem;position:relative}
+.nav{display:flex;gap:4px;background:var(--navy2);border:1px solid var(--border);border-radius:var(--r-xl);padding:5px;margin-bottom:2rem;flex-wrap:wrap;box-shadow:inset 0 1px 0 rgba(255,255,255,0.04)}
+.nav-btn{flex:1;min-width:120px;padding:11px 18px;border-radius:16px;border:none;background:transparent;color:var(--text-muted);font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;font-family:var(--font);display:flex;align-items:center;justify-content:center;gap:8px;letter-spacing:0.3px}
+.nav-btn:hover:not(.active){background:var(--navy3);color:var(--text-sec)}
+.nav-btn.active{background:linear-gradient(135deg,var(--orange),#d96010);color:#fff;font-weight:700;box-shadow:0 2px 16px rgba(249,115,22,0.35)}
+.section{display:none;animation:fadeIn 0.25s ease}.section.active{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.sec-title{font-size:18px;font-weight:800;color:var(--text);font-family:var(--font);margin-bottom:1.5rem;display:flex;align-items:center;gap:10px}
+.sec-title-bar{width:3px;height:22px;background:linear-gradient(180deg,var(--orange),var(--green));border-radius:2px;flex-shrink:0}
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted);margin-bottom:1.5rem;flex-wrap:wrap;background:var(--navy2);border:1px solid var(--border);border-radius:var(--r-md);padding:9px 16px;font-family:var(--font)}
+.bc-link{cursor:pointer;color:var(--orange);font-weight:600;transition:color 0.15s}.bc-link:hover{color:var(--orange2);text-decoration:underline}
+.sep{color:var(--text-muted);opacity:0.4;font-size:14px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.card{background:var(--navy2);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem;cursor:pointer;transition:all 0.22s;position:relative;overflow:hidden}
+.card::after{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),var(--green));transform:scaleX(0);transform-origin:left;transition:transform 0.25s}
+.card:hover{border-color:var(--border-orange);background:var(--navy3);transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,0.3)}
+.card:hover::after{transform:scaleX(1)}.card:hover .card-label{color:var(--orange)}
+.card-icon{font-size:28px;margin-bottom:12px;display:block}.card-label{font-size:14px;font-weight:700;color:var(--text);transition:color 0.2s;font-family:var(--font)}
+.card-sub{font-size:10px;color:var(--text-muted);margin-top:5px;text-transform:uppercase;letter-spacing:1px;font-family:var(--font)}
+.term-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px}
+.term-card{padding:1.5rem;border-radius:var(--r-lg);border:1px solid var(--border);cursor:pointer;transition:all 0.22s;position:relative;overflow:hidden}
+.term-card:hover{transform:translateY(-4px);box-shadow:0 12px 30px rgba(0,0,0,0.35)}
+.t1{background:linear-gradient(135deg,rgba(56,189,248,0.08),rgba(56,189,248,0.03));border-color:rgba(56,189,248,0.2)}.t1 .tc-title{color:var(--blue-accent)}
+.t2{background:linear-gradient(135deg,rgba(34,197,94,0.08),rgba(34,197,94,0.03));border-color:rgba(34,197,94,0.2)}.t2 .tc-title{color:var(--green)}
+.t3{background:linear-gradient(135deg,rgba(249,115,22,0.08),rgba(249,115,22,0.03));border-color:rgba(249,115,22,0.2)}.t3 .tc-title{color:var(--orange)}
+.tc-title{font-size:17px;font-weight:800;margin-bottom:6px;font-family:var(--font)}
+.tc-sub{font-size:12px;color:var(--text-muted);font-family:var(--font-body)}
+.tc-num{position:absolute;top:10px;right:14px;font-size:44px;font-weight:900;opacity:0.06;color:#fff;line-height:1;font-family:var(--font)}
+.table-wrap{border-radius:var(--r-lg);border:1px solid var(--border);overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.2)}
+.syllabus-table{width:100%;border-collapse:collapse;font-size:14px;background:var(--navy2)}
+.syllabus-table th{background:var(--navy3);padding:12px 18px;text-align:left;font-weight:700;font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;border-bottom:1px solid var(--border);font-family:var(--font)}
+.syllabus-table td{padding:13px 18px;border-bottom:1px solid rgba(255,255,255,0.04);color:var(--text);transition:background 0.15s;font-family:var(--font-body)}
+.syllabus-table tr:last-child td{border-bottom:none}
+.ch-num{color:var(--orange);font-weight:800;font-family:var(--font)}.ch-title{font-weight:600;color:var(--text)}.ch-desc{color:var(--text-sec);font-size:13px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;letter-spacing:0.4px;font-family:var(--font)}
+.b-green{background:var(--green-light);color:var(--green);border:1px solid var(--border-green)}
+.b-blue{background:rgba(56,189,248,0.1);color:var(--blue-accent);border:1px solid rgba(56,189,248,0.25)}
+.cal-wrap{background:var(--navy2);border:1px solid var(--border);border-radius:var(--r-xl);padding:1.75rem;box-shadow:0 4px 24px rgba(0,0,0,0.2)}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.cal-month-label{font-size:18px;font-weight:800;color:var(--text);font-family:var(--font);min-width:180px;text-align:center}
+.cal-nav{display:flex;gap:8px;align-items:center}
+.cal-nav-btn{width:36px;height:36px;border-radius:var(--r-md);border:1px solid var(--border-orange);background:var(--orange-light);color:var(--orange);cursor:pointer;font-size:18px;font-family:var(--font);display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px}
+.cal-day-name{text-align:center;font-size:11px;font-weight:700;color:var(--text-muted);padding:7px 0;text-transform:uppercase;letter-spacing:1px;font-family:var(--font)}
+.cal-cell{aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:var(--r-md);font-size:13px;font-weight:600;font-family:var(--font);border:1px solid transparent;position:relative;color:var(--text-sec)}
+.cal-cell.today{background:linear-gradient(135deg,var(--orange),#d96010);color:#fff;font-weight:800}
+.cal-cell.has-event::after{content:'';position:absolute;bottom:4px;width:5px;height:5px;border-radius:50%;background:var(--green)}
+.cal-cell.empty{color:transparent}.cal-cell.holiday{background:var(--red-bg);color:var(--red);border-color:rgba(248,113,113,0.25)}.cal-cell.exam{background:var(--gold-bg);color:var(--gold);border-color:rgba(251,191,36,0.25)}
+.legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:1.25rem;padding-top:1.25rem;border-top:1px solid var(--border)}.leg-item{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted);font-family:var(--font)}.leg-dot{width:10px;height:10px;border-radius:50%}
+.events-panel{margin-top:1.5rem;background:var(--navy3);border:1px solid var(--border);border-radius:var(--r-lg);padding:1.25rem 1.5rem}
+.events-title{font-size:11px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:14px;font-family:var(--font)}
+.event-item{display:flex;gap:12px;align-items:flex-start;padding:9px 0;border-bottom:1px solid rgba(255,255,255,0.04)}.event-item:last-child{border-bottom:none}
+.event-dot{width:8px;height:8px;border-radius:50%;margin-top:5px;flex-shrink:0}.event-text{font-size:13px;color:var(--text);font-family:var(--font-body);font-weight:500}.event-date{font-size:11px;color:var(--text-muted);margin-top:3px;font-family:var(--font)}
+.tt-controls{display:flex;align-items:center;gap:12px;margin-bottom:1.5rem}.tt-label{font-size:13px;color:var(--text-muted);font-family:var(--font);font-weight:600}
+.tt-sel-wrap select{padding:10px 16px;border-radius:var(--r-md);border:1px solid var(--border-orange);background:var(--navy2);color:var(--text);font-size:13px;font-family:var(--font);font-weight:600;outline:none}
+.tt-grid{display:grid;grid-template-columns:88px repeat(5,1fr);gap:6px}
+.tt-head{background:linear-gradient(135deg,var(--navy3),var(--navy4));border:1px solid var(--border-orange);border-radius:var(--r-md);padding:10px;text-align:center;font-size:12px;font-weight:800;color:var(--orange);text-transform:uppercase;letter-spacing:1px;font-family:var(--font)}
+.tt-time{font-size:11px;color:var(--text-muted);display:flex;align-items:center;justify-content:flex-end;padding-right:12px;border-right:1px solid var(--border);font-family:var(--font);font-weight:600}
+.tt-cell{border-radius:var(--r-md);padding:10px 12px;font-size:12px;min-height:58px;display:flex;flex-direction:column;justify-content:center;border:1px solid transparent}
+.tt-cell.math{background:rgba(56,189,248,0.1);color:var(--blue-accent);border-color:rgba(56,189,248,0.2)}.tt-cell.sci{background:var(--green-light);color:var(--green);border-color:var(--border-green)}
+.tt-cell.eng{background:var(--orange-light);color:var(--orange2);border-color:var(--border-orange)}.tt-cell.urdu{background:var(--red-bg);color:var(--red);border-color:rgba(248,113,113,0.2)}
+.tt-cell.pe{background:rgba(255,255,255,0.04);color:var(--text-sec);border-color:var(--border)}.tt-cell.isl{background:rgba(167,139,250,0.1);color:var(--purple);border-color:rgba(167,139,250,0.2)}
+.tt-cell-name{font-weight:700;font-family:var(--font)}.tt-cell-sub{font-size:10px;opacity:0.65;margin-top:3px;font-family:var(--font-body)}.tt-legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:1.25rem}
+.add-fab{position:fixed;bottom:30px;right:30px;width:56px;height:56px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#c45a00);border:2px solid rgba(255,255,255,0.15);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:26px;color:#fff;z-index:100}
+.modal-overlay{position:fixed;inset:0;background:rgba(6,14,31,0.82);display:flex;align-items:center;justify-content:center;z-index:200;opacity:0;pointer-events:none;transition:opacity 0.22s;backdrop-filter:blur(6px)}
+.modal-overlay.show{opacity:1;pointer-events:all}
+.modal{background:var(--navy2);border:1px solid var(--border-orange);border-radius:var(--r-xl);padding:2rem;width:360px;max-width:92vw}
+.modal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem}
+.modal-title{font-size:15px;font-weight:800;color:var(--text);font-family:var(--font);display:flex;align-items:center;gap:9px}
+.modal-close{background:none;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;font-size:14px;width:28px;height:28px;border-radius:var(--r-sm)}
+.modal-section-label{font-size:10px;font-weight:800;color:var(--green);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:12px;font-family:var(--font)}
+.pw-hint{font-size:12px;color:var(--text-muted);margin-bottom:1.25rem;line-height:1.6}
+.pw-input-wrap{position:relative;margin-bottom:1rem}
+.pw-input{width:100%;padding:12px 44px 12px 16px;border-radius:var(--r-md);border:1px solid var(--border-orange);background:var(--navy3);color:var(--text);font-size:14px;font-family:var(--font)}
+.pw-toggle{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;color:var(--text-muted);font-size:15px}
+.pw-error{font-size:12px;color:var(--red);margin-bottom:1rem;display:none;padding:9px 13px;background:var(--red-bg);border-radius:var(--r-md);border:1px solid rgba(248,113,113,0.25)}
+.pw-error.show{display:block}
+.btn-submit{width:100%;padding:13px;border-radius:var(--r-md);background:linear-gradient(135deg,var(--orange),#c45a00);border:none;color:#fff;font-size:14px;font-weight:700;font-family:var(--font);cursor:pointer}
+.admin-panel{display:none}.admin-panel.show{display:block}
+.admin-form{display:flex;flex-direction:column;gap:13px}
+.form-group{display:flex;flex-direction:column;gap:6px}
+.form-label{font-size:11px;color:var(--text-muted);font-weight:700;letter-spacing:0.6px;text-transform:uppercase;font-family:var(--font)}
+.form-input,.form-select,.form-textarea{padding:10px 13px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--navy3);color:var(--text);font-size:13px;font-family:var(--font-body);outline:none}
+.form-textarea{resize:vertical;min-height:68px}
+.btn-add-item{width:100%;padding:11px;border-radius:var(--r-md);background:linear-gradient(135deg,var(--green2),#0f8a3a);border:none;color:#fff;font-size:13px;font-weight:700;font-family:var(--font);cursor:pointer}
+.success-msg{font-size:13px;color:var(--green);padding:11px 14px;background:var(--green-light);border-radius:var(--r-md);border:1px solid var(--border-green);display:none;text-align:center;font-family:var(--font);font-weight:600;margin-bottom:12px}
+.success-msg.show{display:block}
+.stat-row{display:flex;gap:10px;margin-bottom:1.75rem;flex-wrap:wrap}
+.stat-chip{display:flex;align-items:center;gap:8px;background:var(--navy2);border:1px solid var(--border);border-radius:var(--r-md);padding:8px 14px;font-family:var(--font)}
+.stat-num{font-size:16px;font-weight:800;color:var(--orange)}.stat-lbl{font-size:11px;color:var(--text-muted);font-weight:600}
+.stat-chip.green .stat-num{color:var(--green)}.stat-chip.blue .stat-num{color:var(--blue-accent)}
+</style>
+</head>
+<body>
+<header class="header">
+  <div class="header-inner">
+    <div class="header-left">
+      <div class="logo-box">🚀</div>
+      <div>
+        <div class="brand">START<span>WELL</span> EDUCATION</div>
+        <div class="brand-sub">Curriculum Portal</div>
+      </div>
+    </div>
+    <div class="header-badge">📗 2025–26 Session</div>
+  </div>
+</header>
+
+<div class="container">
+  <div class="nav">
+    <button class="nav-btn active" onclick="showSection('syllabus',this)"><span class="nav-icon">📚</span> Syllabus</button>
+    <button class="nav-btn" onclick="showSection('calendar',this)"><span class="nav-icon">📅</span> Calendar</button>
+    <button class="nav-btn" onclick="showSection('timetable',this)"><span class="nav-icon">🕐</span> Timetable</button>
+  </div>
+
+  <div id="syllabus" class="section active">
+    <div id="syl-view-classes">
+      <div class="stat-row">
+        <div class="stat-chip"><span class="stat-num">8</span><span class="stat-lbl">Classes</span></div>
+        <div class="stat-chip green"><span class="stat-num">0</span><span class="stat-lbl">Seed Data</span></div>
+        <div class="stat-chip blue"><span class="stat-num">3</span><span class="stat-lbl">Terms</span></div>
+      </div>
+      <div class="sec-title"><div class="sec-title-bar"></div>Select a class</div>
+      <div class="grid">
+        <div class="card" onclick="showTerms('Class 1',1)"><span class="card-icon">📗</span><div class="card-label">Class 1</div><div class="card-sub">Primary</div></div>
+        <div class="card" onclick="showTerms('Class 2',2)"><span class="card-icon">📘</span><div class="card-label">Class 2</div><div class="card-sub">Primary</div></div>
+        <div class="card" onclick="showTerms('Class 3',3)"><span class="card-icon">📙</span><div class="card-label">Class 3</div><div class="card-sub">Primary</div></div>
+        <div class="card" onclick="showTerms('Class 4',4)"><span class="card-icon">📕</span><div class="card-label">Class 4</div><div class="card-sub">Middle</div></div>
+        <div class="card" onclick="showTerms('Class 5',5)"><span class="card-icon">📗</span><div class="card-label">Class 5</div><div class="card-sub">Middle</div></div>
+        <div class="card" onclick="showTerms('Class 6',6)"><span class="card-icon">📘</span><div class="card-label">Class 6</div><div class="card-sub">Middle</div></div>
+        <div class="card" onclick="showTerms('Class 7',7)"><span class="card-icon">📙</span><div class="card-label">Class 7</div><div class="card-sub">Secondary</div></div>
+        <div class="card" onclick="showTerms('Class 8',8)"><span class="card-icon">📕</span><div class="card-label">Class 8</div><div class="card-sub">Secondary</div></div>
+      </div>
+    </div>
+
+    <div id="syl-view-terms" style="display:none">
+      <div class="breadcrumb">
+        <span class="bc-link" onclick="backToClasses()">🏠 Classes</span><span class="sep">›</span>
+        <span id="bc-class"></span>
+      </div>
+      <div class="sec-title"><div class="sec-title-bar"></div><span id="terms-title">Select a term</span></div>
+      <div class="term-grid">
+        <div class="term-card t1" onclick="showSyllabus(1)"><div class="tc-num">1</div><div class="tc-title">1st Term</div><div class="tc-sub">January – April</div></div>
+        <div class="term-card t2" onclick="showSyllabus(2)"><div class="tc-num">2</div><div class="tc-title">2nd Term</div><div class="tc-sub">May – August</div></div>
+        <div class="term-card t3" onclick="showSyllabus(3)"><div class="tc-num">3</div><div class="tc-title">3rd Term</div><div class="tc-sub">September – December</div></div>
+      </div>
+    </div>
+
+    <div id="syl-view-detail" style="display:none">
+      <div class="breadcrumb">
+        <span class="bc-link" onclick="backToClasses()">🏠 Classes</span><span class="sep">›</span>
+        <span class="bc-link" id="bc-class2" onclick="backToTerms()"></span><span class="sep">›</span>
+        <span id="bc-term"></span>
+      </div>
+      <div class="sec-title"><div class="sec-title-bar"></div><span id="detail-title">Syllabus</span></div>
+      <div class="table-wrap">
+        <table class="syllabus-table">
+          <thead><tr><th style="width:50px">#</th><th>Chapter / Topic</th><th>Description</th><th style="width:140px">Status</th></tr></thead>
+          <tbody id="syl-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div id="calendar" class="section">
+    <div class="sec-title"><div class="sec-title-bar"></div>Academic Calendar 2025–26</div>
+    <div class="cal-wrap">
+      <div class="cal-header">
+        <div class="cal-nav">
+          <button class="cal-nav-btn" onclick="prevMonth()">‹</button>
+          <span class="cal-month-label" id="cal-month-label">April 2026</span>
+          <button class="cal-nav-btn" onclick="nextMonth()">›</button>
+        </div>
+      </div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="legend">
+        <div class="leg-item"><div class="leg-dot" style="background:var(--orange)"></div>Today</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--red);opacity:0.8"></div>Holiday</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>Exam</div>
+        <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Event</div>
+      </div>
+      <div class="events-panel">
+        <div class="events-title">Events this month</div>
+        <div id="events-list"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="timetable" class="section">
+    <div class="sec-title"><div class="sec-title-bar"></div>Weekly Timetable</div>
+    <div class="tt-controls">
+      <span class="tt-label">Class:</span>
+      <div class="tt-sel-wrap">
+        <select id="tt-class-sel" onchange="renderTimetable()">
+          <option>Class 6</option><option>Class 7</option><option>Class 8</option>
+        </select>
+      </div>
+    </div>
+    <div class="tt-grid" id="tt-grid"></div>
+    <div class="tt-legend">
+      <div class="leg-item"><div class="leg-dot" style="background:var(--blue-accent);opacity:0.8"></div>Mathematics</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>Science</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--orange)"></div>English</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>Urdu</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--purple)"></div>Islamiat</div>
+    </div>
+  </div>
+</div>
+
+<button class="add-fab" onclick="openAddModal()" title="Add new item">+</button>
+
+<div class="modal-overlay" id="modal-overlay" onclick="overlayClick(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title" id="modal-title">🔐 Admin Access</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="pw-step">
+      <div class="modal-section-label" id="pw-section-label">Add to Syllabus</div>
+      <p class="pw-hint">Enter the admin password to unlock this section.</p>
+      <div class="pw-input-wrap">
+        <input class="pw-input" type="password" id="pw-input" placeholder="Password…" onkeydown="if(event.key==='Enter')checkPassword()">
+        <button class="pw-toggle" onclick="togglePw()" id="pw-toggle-btn">👁</button>
+      </div>
+      <div class="pw-error" id="pw-error">❌ Incorrect password. Please try again.</div>
+      <button class="btn-submit" onclick="checkPassword()">Unlock &rarr;</button>
+    </div>
+    <div id="admin-step" class="admin-panel">
+      <div class="success-msg" id="success-msg">✅ Item added successfully!</div>
+      <div id="admin-form-wrap"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4bX7l1eyxHDpVyMa-SUglT4W8VR-h27hgRP2E5HwTPOLQKNOYe8W7783eC43MCiGy/exec';
+
+/**
+ * Replace these empty objects with your own live data anytime.
+ * Expected structure:
+ * SYLLABUS_DATA = { "Class 6": { 1:[{title,description,status}], 2:[...], 3:[...] } }
+ * CALENDAR_EVENTS = { "2026-4-25": { type:"holiday|exam|today|event", label:"..." } }
+ * TIMETABLE_DATA = { "Class 6": [ [slot1..slot5], [Tue], [Wed], [Thu], [Fri] ] }
+ */
+const SYLLABUS_DATA = {};
+const CALENDAR_EVENTS = {};
+const TIMETABLE_DATA = {};
+
+let currentSection = 'syllabus';
+let curClass = '';
+let curTerm = 0;
+
+function showSection(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentSection = id;
+  if (id === 'calendar') renderCalendar();
+  if (id === 'timetable') renderTimetable();
+}
+
+function showTerms(cls) {
+  curClass = cls;
+  document.getElementById('syl-view-classes').style.display = 'none';
+  document.getElementById('syl-view-terms').style.display = 'block';
+  document.getElementById('bc-class').textContent = cls;
+  document.getElementById('terms-title').textContent = cls + ' — Select a term';
+}
+
+function showSyllabus(term) {
+  curTerm = term;
+  const tName = ['', '1st term', '2nd term', '3rd term'][term];
+  document.getElementById('syl-view-terms').style.display = 'none';
+  document.getElementById('syl-view-detail').style.display = 'block';
+  document.getElementById('bc-class2').textContent = curClass;
+  document.getElementById('bc-term').textContent = tName;
+  document.getElementById('detail-title').textContent = curClass + ' — ' + tName + ' syllabus';
+
+  const tbody = document.getElementById('syl-tbody');
+  tbody.innerHTML = '';
+  const rows = ((SYLLABUS_DATA[curClass] || {})[term]) || [];
+
+  if (!rows.length) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = '<td class="ch-num">-</td><td class="ch-title">No chapters added yet</td><td class="ch-desc">Use the + button to save data in Google Sheet, then load your own data here.</td><td><span class="badge b-blue">⏳ Pending</span></td>';
+    tbody.appendChild(tr);
+    return;
+  }
+
+  rows.forEach((r, index) => {
+    const status = (r.status || '').toLowerCase() === 'completed';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td class="ch-num">${index + 1}</td><td class="ch-title">${r.title || ''}</td><td class="ch-desc">${r.description || ''}</td><td><span class="badge ${status ? 'b-green' : 'b-blue'}">${status ? '✔ Completed' : '⏳ Upcoming'}</span></td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+function backToClasses() {
+  curClass = '';
+  curTerm = 0;
+  document.getElementById('syl-view-terms').style.display = 'none';
+  document.getElementById('syl-view-detail').style.display = 'none';
+  document.getElementById('syl-view-classes').style.display = 'block';
+}
+
+function backToTerms() {
+  document.getElementById('syl-view-detail').style.display = 'none';
+  document.getElementById('syl-view-terms').style.display = 'block';
+}
+
+let calYear = 2026, calMonth = 3;
+const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const DAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+
+function renderCalendar() {
+  document.getElementById('cal-month-label').textContent = MONTHS[calMonth] + ' ' + calYear;
+  const grid = document.getElementById('cal-grid');
+  grid.innerHTML = '';
+  DAYS.forEach(d => {
+    const el = document.createElement('div');
+    el.className = 'cal-day-name';
+    el.textContent = d;
+    grid.appendChild(el);
+  });
+  const first = new Date(calYear, calMonth, 1).getDay();
+  const days = new Date(calYear, calMonth + 1, 0).getDate();
+  for (let i = 0; i < first; i++) {
+    const el = document.createElement('div');
+    el.className = 'cal-cell empty';
+    grid.appendChild(el);
+  }
+  for (let d = 1; d <= days; d++) {
+    const el = document.createElement('div');
+    el.className = 'cal-cell';
+    const key = `${calYear}-${calMonth + 1}-${d}`;
+    const ev = CALENDAR_EVENTS[key];
+    if (ev) {
+      if (ev.type === 'holiday') el.classList.add('holiday');
+      else if (ev.type === 'exam') el.classList.add('exam');
+      else if (ev.type === 'today') el.classList.add('today');
+      else el.classList.add('has-event');
+      el.title = ev.label || '';
+    }
+    el.textContent = d;
+    grid.appendChild(el);
+  }
+  renderEvents();
+}
+
+function renderEvents() {
+  const list = document.getElementById('events-list');
+  list.innerHTML = '';
+  const upcoming = Object.entries(CALENDAR_EVENTS)
+    .filter(([k]) => {
+      const [y, m] = k.split('-').map(Number);
+      return y === calYear && m === calMonth + 1;
+    })
+    .sort(([a], [b]) => parseInt(a.split('-')[2], 10) - parseInt(b.split('-')[2], 10));
+  if (!upcoming.length) {
+    list.innerHTML = '<div style="font-size:13px;color:var(--text-muted)">No events this month</div>';
+    return;
+  }
+  const colors = { holiday: '#f87171', exam: '#fbbf24', today: '#f97316', event: '#22c55e' };
+  upcoming.forEach(([k, ev]) => {
+    const d = k.split('-')[2];
+    const el = document.createElement('div');
+    el.className = 'event-item';
+    el.innerHTML = `<div class="event-dot" style="background:${colors[ev.type] || '#888'}"></div><div><div class="event-text">${ev.label || ''}</div><div class="event-date">${MONTHS[calMonth]} ${d}, ${calYear}</div></div>`;
+    list.appendChild(el);
+  });
+}
+
+function prevMonth() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } renderCalendar(); }
+function nextMonth() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
+
+const TT_TIMES = ['8:00–8:45', '8:45–9:30', '9:30–10:15', '10:15–11:00', '11:00–11:45'];
+
+function renderTimetable() {
+  const cls = document.getElementById('tt-class-sel').value;
+  const grid = document.getElementById('tt-grid');
+  grid.innerHTML = '';
+  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+  grid.appendChild(Object.assign(document.createElement('div'), { style: 'height:38px' }));
+  days.forEach(d => {
+    const h = document.createElement('div');
+    h.className = 'tt-head';
+    h.textContent = d;
+    grid.appendChild(h);
+  });
+  TT_TIMES.forEach((time, ti) => {
+    const tEl = document.createElement('div');
+    tEl.className = 'tt-time';
+    tEl.textContent = time;
+    grid.appendChild(tEl);
+    days.forEach((_, di) => {
+      const data = (TIMETABLE_DATA[cls] && TIMETABLE_DATA[cls][di] && TIMETABLE_DATA[cls][di][ti]) || { s: 'Free', t: '', c: 'pe' };
+      const cell = document.createElement('div');
+      cell.className = `tt-cell ${data.c || 'pe'}`;
+      cell.innerHTML = `<div class="tt-cell-name">${data.s || 'Free'}</div>${data.t ? `<div class="tt-cell-sub">${data.t}</div>` : ''}`;
+      grid.appendChild(cell);
+    });
+  });
+}
+
+function openAddModal() {
+  const overlay = document.getElementById('modal-overlay');
+  document.getElementById('pw-step').style.display = 'block';
+  document.getElementById('admin-step').classList.remove('show');
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').classList.remove('show');
+  document.getElementById('success-msg').classList.remove('show');
+  const labels = { syllabus: 'Add to Syllabus', calendar: 'Add Calendar Event', timetable: 'Add Timetable Entry' };
+  document.getElementById('pw-section-label').textContent = labels[currentSection] || 'Add New Item';
+  document.getElementById('modal-title').textContent = '🔐 ' + (labels[currentSection] || 'Admin Access');
+  overlay.classList.add('show');
+  setTimeout(() => document.getElementById('pw-input').focus(), 220);
+}
+
+function closeModal() { document.getElementById('modal-overlay').classList.remove('show'); }
+function overlayClick(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
+function togglePw() {
+  const inp = document.getElementById('pw-input');
+  const btn = document.getElementById('pw-toggle-btn');
+  if (inp.type === 'password') { inp.type = 'text'; btn.textContent = '🙈'; }
+  else { inp.type = 'password'; btn.textContent = '👁'; }
+}
+
+async function checkPassword() {
+  const val = document.getElementById('pw-input').value.trim();
+  if (!val) { document.getElementById('pw-error').classList.add('show'); return; }
+  const btn = document.querySelector('.btn-submit');
+  btn.textContent = 'Checking…'; btn.disabled = true;
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ action: 'verifyPassword', password: val })
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('pw-error').classList.remove('show');
+      document.getElementById('pw-step').style.display = 'none';
+      document.getElementById('admin-step').classList.add('show');
+      window._adminPw = val;
+      renderAdminForm();
+    } else {
+      document.getElementById('pw-error').textContent = '❌ Incorrect password. Please try again.';
+      document.getElementById('pw-error').classList.add('show');
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+    }
+  } catch (err) {
+    document.getElementById('pw-error').textContent = '⚠️ Connection error. Check your Apps Script URL.';
+    document.getElementById('pw-error').classList.add('show');
+    console.error(err);
+  } finally {
+    btn.textContent = 'Unlock →'; btn.disabled = false;
+  }
+}
+
+function renderAdminForm() {
+  const wrap = document.getElementById('admin-form-wrap');
+  wrap.innerHTML = '';
+  if (currentSection === 'syllabus') {
+    wrap.innerHTML = `<div class="modal-section-label" style="margin-bottom:14px">New Chapter</div><div class="admin-form">
+      <div class="form-group"><label class="form-label">Class</label><select class="form-select" id="af-class">${[1,2,3,4,5,6,7,8].map(n => `<option>Class ${n}</option>`).join('')}</select></div>
+      <div class="form-group"><label class="form-label">Subject</label><input class="form-input" id="af-subject" placeholder="e.g. Mathematics"></div>
+      <div class="form-group"><label class="form-label">Term</label><select class="form-select" id="af-term"><option>1st Term</option><option>2nd Term</option><option>3rd Term</option></select></div>
+      <div class="form-group"><label class="form-label">Chapter Title</label><input class="form-input" id="af-chapter" placeholder="e.g. Algebra basics"></div>
+      <div class="form-group"><label class="form-label">Description</label><textarea class="form-textarea" id="af-desc" placeholder="Brief description…"></textarea></div>
+      <div class="form-group"><label class="form-label">Status</label><select class="form-select" id="af-status"><option value="upcoming">⏳ Upcoming</option><option value="completed">✔ Completed</option></select></div>
+      <button class="btn-add-item" onclick="submitAdminForm()">+ Add Chapter</button></div>`;
+  } else if (currentSection === 'calendar') {
+    wrap.innerHTML = `<div class="modal-section-label" style="margin-bottom:14px">New Event</div><div class="admin-form">
+      <div class="form-group"><label class="form-label">Event Title</label><input class="form-input" id="af-title" placeholder="e.g. Sports Day"></div>
+      <div class="form-group"><label class="form-label">Date</label><input class="form-input" type="date" id="af-date" style="color-scheme:dark"></div>
+      <div class="form-group"><label class="form-label">Type</label><select class="form-select" id="af-type"><option value="event">📌 Event</option><option value="holiday">🏖 Holiday</option><option value="exam">📝 Exam</option></select></div>
+      <button class="btn-add-item" onclick="submitAdminForm()">+ Add Event</button></div>`;
+  } else {
+    wrap.innerHTML = `<div class="modal-section-label" style="margin-bottom:14px">New Slot</div><div class="admin-form">
+      <div class="form-group"><label class="form-label">Class</label><select class="form-select" id="af-tt-class"><option>Class 6</option><option>Class 7</option><option>Class 8</option></select></div>
+      <div class="form-group"><label class="form-label">Day</label><select class="form-select" id="af-day"><option>Monday</option><option>Tuesday</option><option>Wednesday</option><option>Thursday</option><option>Friday</option></select></div>
+      <div class="form-group"><label class="form-label">Time Slot</label><select class="form-select" id="af-slot"><option>8:00–8:45</option><option>8:45–9:30</option><option>9:30–10:15</option><option>10:15–11:00</option><option>11:00–11:45</option></select></div>
+      <div class="form-group"><label class="form-label">Subject</label><input class="form-input" id="af-subj" placeholder="e.g. Mathematics"></div>
+      <div class="form-group"><label class="form-label">Teacher</label><input class="form-input" id="af-teacher" placeholder="e.g. Mr. Ali"></div>
+      <button class="btn-add-item" onclick="submitAdminForm()">+ Add Slot</button></div>`;
+  }
+}
+
+async function submitAdminForm() {
+  const btn = document.querySelector('.btn-add-item');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+  const payload = { password: window._adminPw || '' };
+  if (currentSection === 'syllabus') {
+    payload.action = 'addSyllabus';
+    payload.className = document.getElementById('af-class')?.value || '';
+    payload.subject = document.getElementById('af-subject')?.value || '';
+    payload.term = document.getElementById('af-term')?.value || '';
+    payload.chapterTitle = document.getElementById('af-chapter')?.value || '';
+    payload.description = document.getElementById('af-desc')?.value || '';
+    payload.status = document.getElementById('af-status')?.value === 'completed' ? 'Completed' : 'Upcoming';
+  } else if (currentSection === 'calendar') {
+    payload.action = 'addCalendar';
+    payload.title = document.getElementById('af-title')?.value || '';
+    payload.date = document.getElementById('af-date')?.value || '';
+    payload.type = (document.getElementById('af-type')?.value || 'event');
+    payload.type = payload.type.charAt(0).toUpperCase() + payload.type.slice(1);
+    payload.academicYear = '2025-26';
+  } else {
+    payload.action = 'addTimetable';
+    payload.className = document.getElementById('af-tt-class')?.value || '';
+    payload.day = document.getElementById('af-day')?.value || '';
+    payload.slot = document.getElementById('af-slot')?.value || '';
+    payload.subject = document.getElementById('af-subj')?.value || '';
+    payload.teacher = document.getElementById('af-teacher')?.value || '';
+  }
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.success) {
+      document.getElementById('success-msg').textContent = '✅ Saved to Google Sheet!';
+      document.getElementById('success-msg').classList.add('show');
+      setTimeout(() => {
+        document.getElementById('success-msg').classList.remove('show');
+        closeModal();
+      }, 1200);
+    } else {
+      alert('❌ Error: ' + (data.message || 'Could not save.'));
+    }
+  } catch (err) {
+    alert('⚠️ Network error — check your Apps Script URL.');
+    console.error(err);
+  } finally {
+    btn.textContent = '+ Add Item'; btn.disabled = false;
+  }
+}
+
+// Optional helper setters so you can inject your own data quickly.
+window.setSyllabusData = function (data) { Object.assign(SYLLABUS_DATA, data || {}); };
+window.setCalendarEvents = function (data) { Object.assign(CALENDAR_EVENTS, data || {}); renderCalendar(); };
+window.setTimetableData = function (data) { Object.assign(TIMETABLE_DATA, data || {}); renderTimetable(); };
+
+renderCalendar();
+renderTimetable();
+</script>
+</body>
+</html>
