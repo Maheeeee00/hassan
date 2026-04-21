@@ -75,7 +75,7 @@ body{
   background:var(--orange-light);
   color:var(--orange);
 }
-.syl-actions{display:flex;justify-content:flex-end;margin-bottom:1rem}
+.syl-actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;margin-bottom:1rem}
 .btn-print{
   border:1px solid var(--border-orange);
   background:var(--orange-light);
@@ -89,6 +89,15 @@ body{
   letter-spacing:0.4px;
 }
 .btn-print:hover{background:var(--orange);color:#fff}
+.btn-print.full{
+  border-color:var(--border-green);
+  background:var(--green-light);
+  color:var(--green);
+}
+.btn-print.full:hover{
+  background:var(--green);
+  color:#fff;
+}
 .breadcrumb{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-muted);margin-bottom:1.5rem;flex-wrap:wrap;background:var(--navy2);border:1px solid var(--border);border-radius:var(--r-md);padding:9px 16px;font-family:var(--font)}
 .bc-link{cursor:pointer;color:var(--orange);font-weight:600;transition:color 0.15s}.bc-link:hover{color:var(--orange2);text-decoration:underline}
 .sep{color:var(--text-muted);opacity:0.4;font-size:14px}
@@ -238,6 +247,7 @@ body{
       <div id="books-tabs" class="books-tabs"></div>
       <div class="syl-actions">
         <button class="btn-print" onclick="printCurrentSyllabus()">🖨 Print Syllabus</button>
+        <button class="btn-print full" onclick="printFullClassSyllabus()">🖨 Print Full Class Syllabus</button>
       </div>
       <div class="table-wrap">
         <table class="syllabus-table">
@@ -493,6 +503,71 @@ function printCurrentSyllabus() {
 <body>
   <div class="title">Startwell Education - Syllabus</div>
   <div class="sub"><strong>Class:</strong> ${escapeHtml(curClass)} &nbsp; | &nbsp; <strong>Term:</strong> ${escapeHtml(termLabel)} &nbsp; | &nbsp; <strong>Book:</strong> ${escapeHtml(selectedBook ? selectedBook.label : 'All')}</div>
+  <table>
+    <thead>
+      <tr>
+        <th style="width:40px">#</th>
+        <th style="width:130px">Subject</th>
+        <th style="width:220px">Chapter / Topic</th>
+        <th>Description</th>
+        <th style="width:90px">Status</th>
+      </tr>
+    </thead>
+    <tbody>${htmlRows}</tbody>
+  </table>
+</body>
+</html>`);
+  printWindow.document.close();
+  printWindow.focus();
+  printWindow.print();
+}
+
+function printFullClassSyllabus() {
+  const rows = ((SYLLABUS_DATA[curClass] || {})[curTerm]) || [];
+  if (!curClass || !curTerm) {
+    alert('Please select class and term first.');
+    return;
+  }
+  if (!rows.length) {
+    alert('No syllabus rows found for this class and term.');
+    return;
+  }
+
+  const termLabel = ['', '1st Term', '2nd Term', '3rd Term'][curTerm] || `${curTerm} Term`;
+  const htmlRows = rows.map((r, index) => {
+    const status = (r.status || '').toLowerCase() === 'completed' ? 'Completed' : 'Upcoming';
+    return `<tr>
+      <td>${index + 1}</td>
+      <td>${escapeHtml(r.subject || '-')}</td>
+      <td>${escapeHtml(r.title || '')}</td>
+      <td>${escapeHtml(r.description || '')}</td>
+      <td>${escapeHtml(status)}</td>
+    </tr>`;
+  }).join('');
+
+  const printWindow = window.open('', '_blank', 'width=980,height=720');
+  if (!printWindow) {
+    alert('Please allow popups to print syllabus.');
+    return;
+  }
+
+  printWindow.document.write(`<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Print Full Class Syllabus - ${escapeHtml(curClass)} ${escapeHtml(termLabel)}</title>
+  <style>
+    body{font-family:Arial,sans-serif;color:#111;padding:24px}
+    .title{font-size:20px;font-weight:700;margin-bottom:6px}
+    .sub{font-size:14px;color:#444;margin-bottom:16px}
+    table{width:100%;border-collapse:collapse;font-size:13px}
+    th,td{border:1px solid #ccc;padding:8px;vertical-align:top}
+    th{background:#f2f2f2;text-align:left}
+  </style>
+</head>
+<body>
+  <div class="title">Startwell Education - Full Class Syllabus</div>
+  <div class="sub"><strong>Class:</strong> ${escapeHtml(curClass)} &nbsp; | &nbsp; <strong>Term:</strong> ${escapeHtml(termLabel)}</div>
   <table>
     <thead>
       <tr>
