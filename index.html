@@ -554,6 +554,7 @@ async function submitAdminForm() {
     if (data.success) {
       document.getElementById('success-msg').textContent = '✅ Saved to Google Sheet!';
       document.getElementById('success-msg').classList.add('show');
+      await loadPortalData();
       setTimeout(() => {
         document.getElementById('success-msg').classList.remove('show');
         closeModal();
@@ -574,8 +575,53 @@ window.setSyllabusData = function (data) { Object.assign(SYLLABUS_DATA, data || 
 window.setCalendarEvents = function (data) { Object.assign(CALENDAR_EVENTS, data || {}); renderCalendar(); };
 window.setTimetableData = function (data) { Object.assign(TIMETABLE_DATA, data || {}); renderTimetable(); };
 
-renderCalendar();
-renderTimetable();
+function clearObject(target) {
+  Object.keys(target).forEach(key => delete target[key]);
+}
+
+function mergeSyllabusData(data) {
+  clearObject(SYLLABUS_DATA);
+  Object.entries(data || {}).forEach(([className, terms]) => {
+    SYLLABUS_DATA[className] = terms || {};
+  });
+}
+
+function mergeCalendarData(data) {
+  clearObject(CALENDAR_EVENTS);
+  Object.entries(data || {}).forEach(([key, value]) => {
+    CALENDAR_EVENTS[key] = value;
+  });
+}
+
+function mergeTimetableData(data) {
+  clearObject(TIMETABLE_DATA);
+  Object.entries(data || {}).forEach(([className, days]) => {
+    TIMETABLE_DATA[className] = days || [];
+  });
+}
+
+async function loadPortalData() {
+  try {
+    const res = await fetch(`${APPS_SCRIPT_URL}?action=getPortalData`);
+    const data = await res.json();
+    if (!data.success) {
+      console.warn('Could not load portal data:', data.message || 'Unknown error');
+      return;
+    }
+    mergeSyllabusData(data.syllabus || {});
+    mergeCalendarData(data.calendar || {});
+    mergeTimetableData(data.timetable || {});
+    renderCalendar();
+    renderTimetable();
+    if (curClass && curTerm) {
+      showSyllabus(curTerm);
+    }
+  } catch (err) {
+    console.error('Failed to load portal data:', err);
+  }
+}
+
+loadPortalData();
 </script>
 </body>
 </html>
