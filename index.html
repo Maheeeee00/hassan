@@ -262,7 +262,7 @@ body{
 </div>
 
 <script>
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby4bX7l1eyxHDpVyMa-SUglT4W8VR-h27hgRP2E5HwTPOLQKNOYe8W7783eC43MCiGy/exec';
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz74Pp6R09S7TG7xqHs1RD5uaY8B8Cv6k4GCc6izeE1YHH8vCVZh4QCTzo_ZatS_Syl/exec';
 
 /**
  * Replace these empty objects with your own live data anytime.
@@ -404,12 +404,13 @@ function prevMonth() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--;
 function nextMonth() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } renderCalendar(); }
 
 const TT_TIMES = ['8:00–8:45', '8:45–9:30', '9:30–10:15', '10:15–11:00', '11:00–11:45'];
+const TT_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
 
 function renderTimetable() {
   const cls = document.getElementById('tt-class-sel').value;
   const grid = document.getElementById('tt-grid');
   grid.innerHTML = '';
-  const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+  const days = TT_DAYS;
   grid.appendChild(Object.assign(document.createElement('div'), { style: 'height:38px' }));
   days.forEach(d => {
     const h = document.createElement('div');
@@ -554,6 +555,9 @@ async function submitAdminForm() {
     if (data.success) {
       document.getElementById('success-msg').textContent = '✅ Saved to Google Sheet!';
       document.getElementById('success-msg').classList.add('show');
+      if (data.data) {
+        applySavedItemToLocalState(payload.action, data.data);
+      }
       await loadPortalData();
       setTimeout(() => {
         document.getElementById('success-msg').classList.remove('show');
@@ -600,17 +604,208 @@ function mergeTimetableData(data) {
   });
 }
 
-async function loadPortalData() {
-  try {
-    const res = await fetch(`${APPS_SCRIPT_URL}?action=getPortalData`);
-    const data = await res.json();
-    if (!data.success) {
-      console.warn('Could not load portal data:', data.message || 'Unknown error');
+function termToNumber(termValue) {
+  const text = String(termValue || '').toLowerCase();
+  if (text.includes('1') || text.includes('first')) return 1;
+  if (text.includes('2') || text.includes('second')) return 2;
+  if (text.includes('3') || text.includes('third')) return 3;
+  return 0;
+}
+
+function normalizeSlotText(slotText) {
+  return String(slotText || '').replace(/\s+/g, '').replace(/-/g, '–');
+}
+
+function dayToIndex(dayValue) {
+  const d = String(dayValue || '').toLowerCase();
+  if (d === 'monday' || d === 'mon') return 0;
+  if (d === 'tuesday' || d === 'tue') return 1;
+  if (d === 'wednesday' || d === 'wed') return 2;
+  if (d === 'thursday' || d === 'thu') return 3;
+  if (d === 'friday' || d === 'fri') return 4;
+  return -1;
+}
+
+function slotToIndex(slotValue) {
+  const slot = normalizeSlotText(slotValue);
+  const slots = TT_TIMES.map(normalizeSlotText);
+  for (let i = 0; i < slots.length; i += 1) {
+    if (slots[i] === slot) return i;
+  }
+  return -1;
+}
+
+function subjectToCellClass(subjectValue) {
+  const s = String(subjectValue || '').toLowerCase();
+  if (!s) return 'pe';
+  if (s.includes('math')) return 'math';
+  if (s.includes('science')) return 'sci';
+  if (s.includes('english')) return 'eng';
+  if (s.includes('urdu')) return 'urdu';
+  if (s.includes('islamiat') || s.includes('islamiyat')) return 'isl';
+  return 'pe';
+}
+
+function dateToKey(dateValue) {
+  const text = String(dateValue || '');
+  if (!text) return '';
+  const parts = text.split('-').map(Number);
+  if (parts.length === 3 && parts.every(n => !Number.isNaN(n))) {
+    return `${parts[0]}-${parts[1]}-${parts[2]}`;
+  }
+  const dt = new Date(text);
+  if (Number.isNaN(dt.getTime())) return '';
+  return `${dt.getFullYear()}-${dt.getMonth() + 1}-${dt.getDate()}`;
+}
+
+function syllabusRowsToMap(rows) {
+  const map = {};
+  (rows || []).forEach(row => {
+    const className = row.className || row.class || '';
+    const termNumber = Number(row.termNumber) || termToNumber(row.term);
+    if (!className || !termNumber) return;
+    if (!map[className]) map[className] = {};
+    if (!map[className][termNumber]) map[className][termNumber] = [];
+    map[className][termNumber].push({
+      title: row.chapterTitle || row.title || '',
+      description: row.description || '',
+      status: row.status || 'Upcoming',
+      subject: row.subject || '',
+    });
+  });
+  return map;
+}
+
+function calendarRowsToMap(rows) {
+  const map = {};
+  (rows || []).forEach(row => {
+    const key = row.dateKey || dateToKey(row.date);
+    if (!key) return;
+    const type = String(row.type || 'event').toLowerCase();
+    const label = row.title || row.label || '';
+    if (!map[key]) {
+      map[key] = { type, label };
       return;
     }
-    mergeSyllabusData(data.syllabus || {});
-    mergeCalendarData(data.calendar || {});
-    mergeTimetableData(data.timetable || {});
+    map[key].label = [map[key].label, label].filter(Boolean).join(' | ');
+  });
+  return map;
+}
+
+function timetableRowsToMap(rows) {
+  const map = {};
+  (rows || []).forEach(row => {
+    const className = row.className || row.class || '';
+    if (!className) return;
+    if (!map[className]) map[className] = [[], [], [], [], []];
+    const dayIndex = dayToIndex(row.day);
+    const slotIndex = slotToIndex(row.slot);
+    if (dayIndex < 0 || slotIndex < 0) return;
+    map[className][dayIndex][slotIndex] = {
+      s: row.subject || 'Free',
+      t: row.teacher || '',
+      c: subjectToCellClass(row.subject),
+    };
+  });
+  return map;
+}
+
+function applySavedItemToLocalState(action, row) {
+  if (!row || !action) return;
+  if (action === 'addSyllabus') {
+    const className = row.className || '';
+    const termNumber = Number(row.termNumber) || termToNumber(row.term);
+    if (!className || !termNumber) return;
+    if (!SYLLABUS_DATA[className]) SYLLABUS_DATA[className] = {};
+    if (!SYLLABUS_DATA[className][termNumber]) SYLLABUS_DATA[className][termNumber] = [];
+    SYLLABUS_DATA[className][termNumber].push({
+      title: row.chapterTitle || row.title || '',
+      description: row.description || '',
+      status: row.status || 'Upcoming',
+      subject: row.subject || '',
+    });
+  } else if (action === 'addCalendar') {
+    const key = row.dateKey || dateToKey(row.date);
+    if (!key) return;
+    CALENDAR_EVENTS[key] = {
+      type: String(row.type || 'event').toLowerCase(),
+      label: row.title || row.label || '',
+    };
+  } else if (action === 'addTimetable') {
+    const className = row.className || '';
+    if (!className) return;
+    if (!TIMETABLE_DATA[className]) TIMETABLE_DATA[className] = [[], [], [], [], []];
+    const dayIndex = dayToIndex(row.day);
+    const slotIndex = slotToIndex(row.slot);
+    if (dayIndex < 0 || slotIndex < 0) return;
+    TIMETABLE_DATA[className][dayIndex][slotIndex] = {
+      s: row.subject || 'Free',
+      t: row.teacher || '',
+      c: subjectToCellClass(row.subject),
+    };
+  }
+}
+
+function extractEnvelope(payload) {
+  if (payload && typeof payload === 'object' && payload.data && typeof payload.data === 'object') {
+    return payload.data;
+  }
+  return payload || {};
+}
+
+async function fetchJson(url) {
+  const res = await fetch(url);
+  return res.json();
+}
+
+async function loadPortalData() {
+  try {
+    const payload = await fetchJson(`${APPS_SCRIPT_URL}?action=getPortalData`);
+    if (!payload.success) {
+      console.warn('Could not load portal data:', payload.message || 'Unknown error');
+      return;
+    }
+
+    let source = extractEnvelope(payload);
+    let syllabusSource = source.syllabus;
+    let calendarSource = source.calendar;
+    let timetableSource = source.timetable;
+
+    // Fallback: if getPortalData is old/unsupported, call dedicated endpoints.
+    if (
+      syllabusSource === undefined &&
+      calendarSource === undefined &&
+      timetableSource === undefined
+    ) {
+      const [sylResult, calResult, ttResult] = await Promise.allSettled([
+        fetchJson(`${APPS_SCRIPT_URL}?action=getSyllabus`),
+        fetchJson(`${APPS_SCRIPT_URL}?action=getCalendar`),
+        fetchJson(`${APPS_SCRIPT_URL}?action=getTimetable`),
+      ]);
+      if (sylResult.status === 'fulfilled' && sylResult.value.success) {
+        syllabusSource = sylResult.value.data;
+      }
+      if (calResult.status === 'fulfilled' && calResult.value.success) {
+        calendarSource = calResult.value.data;
+      }
+      if (ttResult.status === 'fulfilled' && ttResult.value.success) {
+        timetableSource = ttResult.value.data;
+      }
+    }
+
+    const syllabusMap = Array.isArray(syllabusSource)
+      ? syllabusRowsToMap(syllabusSource)
+      : (syllabusSource || {});
+    const calendarMap = Array.isArray(calendarSource)
+      ? calendarRowsToMap(calendarSource)
+      : (calendarSource || {});
+    const timetableMap = Array.isArray(timetableSource)
+      ? timetableRowsToMap(timetableSource)
+      : (timetableSource || {});
+
+    mergeSyllabusData(syllabusMap);
+    mergeCalendarData(calendarMap);
+    mergeTimetableData(timetableMap);
     renderCalendar();
     renderTimetable();
     if (curClass && curTerm) {
